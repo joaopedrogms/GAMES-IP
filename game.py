@@ -34,7 +34,7 @@ class Character(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image('sprite_llama.png')
         self.image_upper = self.rect.copy()
-        self.was_pressed = 'n'
+        self.state = 1
         self.hp = 3
         self.attack = 1
         self.speed = 10
@@ -52,18 +52,18 @@ class Character(pg.sprite.Sprite):
         # if seçf
 
     def _jump(self, heigth):
-        if (pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP]):
-            # print(self.rect)
-            self.was_pressed = 's'
-            if self.rect[1] >= self.image_upper[1] - 50 and self.was_pressed == 'n':
-                print(self.was_pressed)
+        if ((pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP])) and (self.state == 1):
+            if self.rect[1] > self.image_upper[1] - 50:
                 self.rect = self.rect.move(0, -5)
-            elif self.was_pressed == 's':
-                if self.rect.bottom < heigth:
-                    print("AAAAAAAAAAAAAAAAAAAAAAAAAA")
-                    self.rect = self.rect.move(0, 5)
+                print(f"Subindo: {self.rect[1]}")
+            elif self.rect[1] == self.image_upper[1] - 50:
+                self.state = 2    
+        elif (pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP]) and (self.state == 2):
+            if self.rect.bottom < heigth:
+                self.rect = self.rect.move(0, 5)
+                print(f"Descendo: {self.rect[1]}")
+            else: self.state = 1     
         else:
-            self.was_pressed = 'n'
             if self.rect[1] != self.image_upper[1]:
                 if self.rect.bottom < heigth:
                     self.rect = self.rect.move(0, 5)
@@ -73,6 +73,7 @@ class Character(pg.sprite.Sprite):
         if (pg.key.get_pressed()[pg.K_d]) or (pg.key.get_pressed()[pg.K_RIGHT]):
             if self.rect.right < width:
                 self.rect = self.rect.move(self.speed, 0)
+                
         if (pg.key.get_pressed()[pg.K_a]) or (pg.key.get_pressed()[pg.K_LEFT]):
             if self.rect.left > 0:
                 self.rect = self.rect.move(-self.speed, 0)
