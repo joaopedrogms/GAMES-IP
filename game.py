@@ -55,13 +55,11 @@ class Character(pg.sprite.Sprite):
         if ((pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP])) and (self.state == 1):
             if self.rect[1] > self.image_upper[1] - 50:
                 self.rect = self.rect.move(0, -5)
-                print(f"Subindo: {self.rect[1]}")
             elif self.rect[1] == self.image_upper[1] - 50:
                 self.state = 2    
         elif (pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP]) and (self.state == 2):
             if self.rect.bottom < heigth:
                 self.rect = self.rect.move(0, 5)
-                print(f"Descendo: {self.rect[1]}")
             else: self.state = 1     
         else:
             if self.rect[1] != self.image_upper[1]:
@@ -70,13 +68,27 @@ class Character(pg.sprite.Sprite):
 
 
     def _walk(self, width):
-        if (pg.key.get_pressed()[pg.K_d]) or (pg.key.get_pressed()[pg.K_RIGHT]):
+        d_pressed = pg.key.get_pressed()[pg.K_d]
+        right_pressed = pg.key.get_pressed()[pg.K_RIGHT]
+        up_pressed = pg.key.get_pressed()[pg.K_UP]
+        w_pressed = pg.key.get_pressed()[pg.K_w]
+        left_pressed = pg.key.get_pressed()[pg.K_LEFT]
+        a_pressed = pg.key.get_pressed()[pg.K_a]
+
+        if (d_pressed or right_pressed) and (up_pressed or w_pressed):
             if self.rect.right < width:
                 self.rect = self.rect.move(self.speed, 0)
-                
-        if (pg.key.get_pressed()[pg.K_a]) or (pg.key.get_pressed()[pg.K_LEFT]):
+        elif d_pressed or right_pressed:
+            if self.rect.right < width:
+                self.rect = self.rect.move(self.speed, 0)       
+
+        if (left_pressed or a_pressed) and (up_pressed or w_pressed):
             if self.rect.left > 0:
                 self.rect = self.rect.move(-self.speed, 0)
+        elif left_pressed or a_pressed:
+            print("chegou")
+            if self.rect.left > 0:
+                self.rect = self.rect.move(-self.speed, 0)     
 
 
 def main():
