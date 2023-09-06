@@ -34,7 +34,7 @@ class Character(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.image, self.rect = load_image('sprite_llama.png')
         self.image_upper = self.rect.copy()
-        self.jump_call_counter = 1
+        self.was_pressed = 'n'
         self.hp = 3
         self.attack = 1
         self.speed = 10
@@ -54,17 +54,20 @@ class Character(pg.sprite.Sprite):
     def _jump(self, heigth):
         if (pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP]):
             # print(self.rect)
-            if self.rect[1] >= self.image_upper[1] - 50:
-                # print(self.image_upper)
-                print(self.rect)
+            self.was_pressed = 's'
+            if self.rect[1] >= self.image_upper[1] - 50 and self.was_pressed == 'n':
+                print(self.was_pressed)
                 self.rect = self.rect.move(0, -5)
-        else:
-            if self.rect[1] != self.image_upper[1]:
-                if self.jump_call_counter == 5:
-                    self.jump_call_counter = 0
-                elif self.jump_call_counter < 5 and self.rect.bottom < heigth:
+            elif self.was_pressed == 's':
+                if self.rect.bottom < heigth:
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAA")
                     self.rect = self.rect.move(0, 5)
-                    self.jump_call_counter = self.jump_call_counter + 1
+        else:
+            self.was_pressed = 'n'
+            if self.rect[1] != self.image_upper[1]:
+                if self.rect.bottom < heigth:
+                    self.rect = self.rect.move(0, 5)
+
 
     def _walk(self, width):
         if (pg.key.get_pressed()[pg.K_d]) or (pg.key.get_pressed()[pg.K_RIGHT]):
