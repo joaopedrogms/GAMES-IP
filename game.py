@@ -1,6 +1,9 @@
 import os
 import pygame as pg
 
+x = 900
+y = 700
+
 if not pg.font:
     print("Warning, fonts disabled")
 if not pg.mixer:
@@ -17,7 +20,7 @@ def load_image(name, colorkey=None, scale=1):
 
     size = image.get_size()
     size = (size[0] * scale, size[1] * scale)
-    image = pg.transform.scale(image, size)
+    image = pg.transform.scale(image, (x/8,y/6))
 
     image = image.convert_alpha()
     if colorkey is not None:
@@ -94,7 +97,7 @@ class Character(pg.sprite.Sprite):
 def main():
 
     pg.init()
-    screen = pg.display.set_mode((640, 480), pg.SCALED)
+    screen = pg.display.set_mode((x, y), pg.SCALED)
     pg.display.set_caption("Llama simulator")
 
     background = pg.Surface(screen.get_size())
