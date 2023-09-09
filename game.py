@@ -62,12 +62,9 @@ class Character(pg.sprite.Sprite):
 
         if self.jump:
             if self.rect.bottom >= 960:
-                #self.image = load_image('sprite_llama.png')
                 self.rect.y = 959 - self.rect.height
-                # a altura esta um pixel menor do que deveria pq o persongaem esta colidindo com o chão
                 self.jump = False
             else:
-                #self.image = load_image('sprite_llama.png')
                 self.rect.y += self.jump_height
                 self.jump_height += gravity
 
