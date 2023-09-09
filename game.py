@@ -10,7 +10,7 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, "media")
 
 
-def load_image(name, colorkey=None, scale=1):
+def load_image(name, colorkey=None, scale=0.3):
     fullpath = os.path.join(data_dir, 'img')
     fullname = os.path.join(fullpath, name)
     image = pg.image.load(fullname)
@@ -25,22 +25,22 @@ def load_image(name, colorkey=None, scale=1):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey, pg.RLEACCEL)
 
-    return image, image.get_rect()
-
+    return image
 
 class Character(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('sprite_llama.png')
+        self.image = load_image('sprite_llama.png')
+        self.rect = load_image('sprite_llama.png').get_rect()
         self.image_upper = self.rect.copy()
-        self.state = 1
+        self.looking = True
+        self.jump = False
         self.hp = 3
         self.attack = 1
-        self.speed = 10
+        self.speed = 3
 
     def update(self, width, heigth):
-        # responsável por decidir o que o personagem vai fazer
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
@@ -48,53 +48,59 @@ class Character(pg.sprite.Sprite):
             self.image_upper = self.rect.copy()
 
         self._walk(width)
-        self._jump(heigth)
-        # if seçf
+        self._jump()
 
-    def _jump(self, heigth):
-        if ((pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP])) and (self.state == 1):
-            if self.rect[1] > self.image_upper[1] - 50:
-                self.rect = self.rect.move(0, -5)
-            elif self.rect[1] == self.image_upper[1] - 50:
-                self.state = 2    
-        elif (pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP]) and (self.state == 2):
-            if self.rect.bottom < heigth:
-                self.rect = self.rect.move(0, 5)
-            else: self.state = 1     
-        else:
-            if self.rect[1] != self.image_upper[1]:
-                if self.rect.bottom < heigth:
-                    self.rect = self.rect.move(0, 5)
+    def _jump(self):
+        up_pressed = pg.key.get_pressed()[pg.K_UP]
+        w_pressed = pg.key.get_pressed()[pg.K_w]
+        jump_height = 10
+        gravity = 0.3
 
+        if (w_pressed or up_pressed) and not self.jump:
+            self.jump = True
+            self.jump_height = -jump_height
+
+        if self.jump:
+            if self.rect.bottom >= 960:
+                #self.image = load_image('sprite_llama.png')
+                self.rect.y = 959 - self.rect.height
+                # a altura esta um pixel menor do que deveria pq o persongaem esta colidindo com o chão
+                self.jump = False
+            else:
+                #self.image = load_image('sprite_llama.png')
+                self.rect.y += self.jump_height
+                self.jump_height += gravity
 
     def _walk(self, width):
         d_pressed = pg.key.get_pressed()[pg.K_d]
         right_pressed = pg.key.get_pressed()[pg.K_RIGHT]
-        up_pressed = pg.key.get_pressed()[pg.K_UP]
-        w_pressed = pg.key.get_pressed()[pg.K_w]
         left_pressed = pg.key.get_pressed()[pg.K_LEFT]
         a_pressed = pg.key.get_pressed()[pg.K_a]
 
-        if (d_pressed or right_pressed) and (up_pressed or w_pressed):
+        if d_pressed or right_pressed:
+            self.looking = True
             if self.rect.right < width:
                 self.rect = self.rect.move(self.speed, 0)
-        elif d_pressed or right_pressed:
-            if self.rect.right < width:
-                self.rect = self.rect.move(self.speed, 0)       
-
-        if (left_pressed or a_pressed) and (up_pressed or w_pressed):
+        elif left_pressed or a_pressed:
+            self.looking = False
             if self.rect.left > 0:
                 self.rect = self.rect.move(-self.speed, 0)
-        elif left_pressed or a_pressed:
-            print("chegou")
-            if self.rect.left > 0:
-                self.rect = self.rect.move(-self.speed, 0)     
 
+        if self.jump:
+            if self.looking:
+                self.image = pg.transform.flip(load_image('sprite_llama_pulo.png'), True, False)
+            else:
+                self.image = load_image('sprite_llama_pulo.png')
+        else:
+            if self.looking:
+                self.image = pg.transform.flip(load_image('sprite_llama.png'), True, False)
+            else:
+                self.image = load_image('sprite_llama.png')
 
 def main():
 
     pg.init()
-    screen = pg.display.set_mode((640, 480), pg.SCALED)
+    screen = pg.display.set_mode((1280, 960), pg.SCALED)
     pg.display.set_caption("Llama simulator")
 
     background = pg.Surface(screen.get_size())
