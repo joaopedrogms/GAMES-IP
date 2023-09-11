@@ -10,7 +10,7 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, "media")
 
 
-def load_image(name, colorkey=None, scale=0.3):
+def load_image(name, colorkey=None, scale=1):
     fullpath = os.path.join(data_dir, 'img')
     fullname = os.path.join(fullpath, name)
     image = pg.image.load(fullname)
@@ -25,14 +25,14 @@ def load_image(name, colorkey=None, scale=0.3):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey, pg.RLEACCEL)
 
-    return image
+    return image, image.get_rect()
+
 
 class Character(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = load_image('sprite_llama.png')
-        self.rect = load_image('sprite_llama.png').get_rect()
+        self.image, self.rect = load_image('sprite_llama.png')
         self.image_upper = self.rect.copy()
         self.looking = True
         self.jump = False
@@ -41,6 +41,7 @@ class Character(pg.sprite.Sprite):
         self.speed = 3
 
     def update(self, width, heigth):
+        # responsável por decidir o que o personagem vai fazer
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
@@ -68,6 +69,7 @@ class Character(pg.sprite.Sprite):
                 self.rect.y += self.jump_height
                 self.jump_height += gravity
 
+
     def _walk(self, width):
         d_pressed = pg.key.get_pressed()[pg.K_d]
         right_pressed = pg.key.get_pressed()[pg.K_RIGHT]
@@ -75,9 +77,9 @@ class Character(pg.sprite.Sprite):
         a_pressed = pg.key.get_pressed()[pg.K_a]
 
         if d_pressed or right_pressed:
-            self.looking = True
-            if self.rect.right < width:
-                self.rect = self.rect.move(self.speed, 0)
+                self.looking = True
+                if self.rect.right < width:
+                    self.rect = self.rect.move(self.speed, 0)
         elif left_pressed or a_pressed:
             self.looking = False
             if self.rect.left > 0:
@@ -92,7 +94,7 @@ class Character(pg.sprite.Sprite):
             if self.looking:
                 self.image = pg.transform.flip(load_image('sprite_llama.png'), True, False)
             else:
-                self.image = load_image('sprite_llama.png')
+                self.image = load_image('sprite_llama.png')     
 
 def main():
 
