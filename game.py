@@ -1,5 +1,6 @@
 import os
 import pygame as pg
+from pygame.locals import *
 
 if not pg.font:
     print("Warning, fonts disabled")
@@ -39,6 +40,7 @@ class Character(pg.sprite.Sprite):
         self.hp = 3
         self.attack = 1
         self.speed = 3
+        self.chaves_coletadas = 0
 
     def update(self, width, heigth):
         top_value = self.rect[1]
@@ -94,8 +96,27 @@ class Character(pg.sprite.Sprite):
             else:
                 self.image = load_image('sprite_llama.png')
 
-def main():
+class Key(pg.sprite.Sprite):
+    def __init__(self, x, y, scale=0.15):
+        pg.sprite.Sprite.__init__(self)
+        self.original_image = load_image('key.jpg')
+        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.collected = False  # Inicialmente, a chave não foi coletada
 
+    def update(self, character):
+        if not self.collected:
+            if self.rect.colliderect(character.rect):
+                self.collected = True
+                character.chaves_coletadas += 1  # Incrementa o contador de chaves coletadas no personagem
+    
+    def draw(self, screen):
+        if not self.collected:
+            screen.blit(self.image, self.rect)
+            
+
+def main():
     pg.init()
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption("Llama simulator")
@@ -108,7 +129,16 @@ def main():
     background = load_image('background.jpeg')
     background = pg.transform.scale(background,(width,height))
 
+
+    # chave
+    keys_group = pg.sprite.Group()
+    key1 = Key(600, 650)  # Posição da chave
+    key2 = Key(400, 650)
+    imagem_chave = Key(930, 30)
+    keys_group.add(key1, key2, imagem_chave)
+
     screen.blit(background, (0, 0))
+    
     print(pg.display.get_surface().get_size())
     pg.display.flip()
 
@@ -130,9 +160,22 @@ def main():
 
         allsprites.update(screen.get_size()[0], screen.get_size()[1])
 
+        keys_group.update(pocoyo)
+        keys_group.draw(screen)
+
         screen.blit(background, (0, 0))
+        for key in keys_group:
+            key.draw(screen)
+
         allsprites.draw(screen)
 
+        # Exibe a quantidade de chaves coletadas no canto superior direito da tela
+        mensagem = f'{pocoyo.chaves_coletadas}/2'
+        fonte = pg.font.SysFont('Arial', 30)
+        texto_formatado = fonte.render(mensagem, True, (255, 255, 50))
+        # Define a posição da frase no canto superior direito
+        screen.blit(texto_formatado, (950, 15))
+        
         pg.display.flip()
 
     pg.quit()
