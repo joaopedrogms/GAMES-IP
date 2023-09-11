@@ -1,9 +1,6 @@
 import os
 import pygame as pg
 
-largura = 900
-altura = 700
-
 if not pg.font:
     print("Warning, fonts disabled")
 if not pg.mixer:
@@ -13,7 +10,7 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, "media")
 
 
-def load_image(name, colorkey=None, scale=1):
+def load_image(name, colorkey=None, scale=0.3):
     fullpath = os.path.join(data_dir, 'img')
     fullname = os.path.join(fullpath, name)
     image = pg.image.load(fullname)
@@ -28,22 +25,23 @@ def load_image(name, colorkey=None, scale=1):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey, pg.RLEACCEL)
 
-    return image, image.get_rect()
-
+    return image
 
 class Character(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('sprite_llama.png')
+        self.image = load_image('sprite_llama.png')
+        self.rect = load_image('sprite_llama.png').get_rect()
         self.image_upper = self.rect.copy()
-        self.state = 1
+        self.looking = True
+        self.jump = False
         self.hp = 3
         self.attack = 1
-        self.speed = 10
+        self.speed = 3
+        self.chaves_coletadas = 0
 
     def update(self, width, heigth):
-        # responsável por decidir o que o personagem vai fazer
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
@@ -52,60 +50,91 @@ class Character(pg.sprite.Sprite):
 
         self._walk(width)
         self._jump(heigth)
-        # if seçf
 
-    def _jump(self, heigth):
-        if ((pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP])) and (self.state == 1):
-            if self.rect[1] > self.image_upper[1] - 50:
-                self.rect = self.rect.move(0, -5)
-            elif self.rect[1] == self.image_upper[1] - 50:
-                self.state = 2    
-        elif (pg.key.get_pressed()[pg.K_w]) or (pg.key.get_pressed()[pg.K_UP]) and (self.state == 2):
-            if self.rect.bottom < heigth:
-                self.rect = self.rect.move(0, 5)
-            else: self.state = 1     
-        else:
-            if self.rect[1] != self.image_upper[1]:
-                if self.rect.bottom < heigth:
-                    self.rect = self.rect.move(0, 5)
+    def _jump(self, height):
+        up_pressed = pg.key.get_pressed()[pg.K_UP]
+        w_pressed = pg.key.get_pressed()[pg.K_w]
+        jump_height = 10
+        gravity = 0.3
 
+        if (w_pressed or up_pressed) and not self.jump:
+            self.jump = True
+            self.jump_height = -jump_height
+
+        if self.jump:
+            if self.rect.bottom >= height:
+                self.rect.y = (height - 1) - self.rect.height
+                self.jump = False
+            else:
+                self.rect.y += self.jump_height
+                self.jump_height += gravity
 
     def _walk(self, width):
         d_pressed = pg.key.get_pressed()[pg.K_d]
         right_pressed = pg.key.get_pressed()[pg.K_RIGHT]
-        up_pressed = pg.key.get_pressed()[pg.K_UP]
-        w_pressed = pg.key.get_pressed()[pg.K_w]
         left_pressed = pg.key.get_pressed()[pg.K_LEFT]
         a_pressed = pg.key.get_pressed()[pg.K_a]
 
-        if (d_pressed or right_pressed) and (up_pressed or w_pressed):
+        if d_pressed or right_pressed:
+            self.looking = True
             if self.rect.right < width:
                 self.rect = self.rect.move(self.speed, 0)
-        elif d_pressed or right_pressed:
-            if self.rect.right < width:
-                self.rect = self.rect.move(self.speed, 0)       
-
-        if (left_pressed or a_pressed) and (up_pressed or w_pressed):
+        elif left_pressed or a_pressed:
+            self.looking = False
             if self.rect.left > 0:
                 self.rect = self.rect.move(-self.speed, 0)
-        elif left_pressed or a_pressed:
-            print("chegou")
-            if self.rect.left > 0:
-                self.rect = self.rect.move(-self.speed, 0)     
 
+        if self.jump:
+            if self.looking:
+                self.image = pg.transform.flip(load_image('sprite_llama_pulo.png'), True, False)
+            else:
+                self.image = load_image('sprite_llama_pulo.png')
+        else:
+            if self.looking:
+                self.image = pg.transform.flip(load_image('sprite_llama.png'), True, False)
+            else:
+                self.image = load_image('sprite_llama.png')
+
+class Key(pg.sprite.Sprite):
+    def __init__(self, x, y, scale=0.15):
+        pg.sprite.Sprite.__init__(self)
+        self.original_image = load_image('key.jpg')
+        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.collected = False  # Inicialmente, a chave não foi coletada
+
+    def update(self, character):
+        if not self.collected:
+            if self.rect.colliderect(character.rect):
+                self.collected = True
+                character.chaves_coletadas += 1  # Incrementa o contador de chaves coletadas no personagem
+    
+    def draw(self, screen):
+        if not self.collected:
+            screen.blit(self.image, self.rect)
+            
 
 def main():
-
     pg.init()
-    screen = pg.display.set_mode((largura, altura), pg.SCALED)
+    screen = pg.display.set_mode((640, 480), pg.SCALED)
     pg.display.set_caption("Llama simulator")
-
 
     background = pg.Surface(screen.get_size())
     background = background.convert()
-    background.fill((128, 128, 128))
+    background = load_image('background.jpeg')
+    background = pg.transform.scale(background,(width,height))
+
+
+    # chave
+    keys_group = pg.sprite.Group()
+    key1 = Key(600, 650)  # Posição da chave
+    key2 = Key(400, 650)
+    imagem_chave = Key(930, 30)
+    keys_group.add(key1, key2, imagem_chave)
 
     screen.blit(background, (0, 0))
+    
     print(pg.display.get_surface().get_size())
     pg.display.flip()
 
@@ -127,9 +156,22 @@ def main():
 
         allsprites.update(screen.get_size()[0], screen.get_size()[1])
 
+        keys_group.update(pocoyo)
+        keys_group.draw(screen)
+
         screen.blit(background, (0, 0))
+        for key in keys_group:
+            key.draw(screen)
+
         allsprites.draw(screen)
 
+        # Exibe a quantidade de chaves coletadas no canto superior direito da tela
+        mensagem = f'{pocoyo.chaves_coletadas}/2'
+        fonte = pg.font.SysFont('Arial', 30)
+        texto_formatado = fonte.render(mensagem, True, (255, 255, 50))
+        # Define a posição da frase no canto superior direito
+        screen.blit(texto_formatado, (950, 15))
+        
         pg.display.flip()
         pg.draw.line(screen, (255,255,0), (390,300), (790,300), 50)
 
