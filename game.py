@@ -100,9 +100,13 @@ def main():
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption("Llama simulator")
 
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
+
     background = pg.Surface(screen.get_size())
     background = background.convert()
-    background.fill((128, 128, 128))
+    background = load_image('background.jpeg')
+    background = pg.transform.scale(background,(width,height))
 
     screen.blit(background, (0, 0))
     print(pg.display.get_surface().get_size())
