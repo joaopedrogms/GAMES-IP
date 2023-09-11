@@ -48,9 +48,9 @@ class Character(pg.sprite.Sprite):
             self.image_upper = self.rect.copy()
 
         self._walk(width)
-        self._jump()
+        self._jump(heigth)
 
-    def _jump(self):
+    def _jump(self, height):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
         w_pressed = pg.key.get_pressed()[pg.K_w]
         jump_height = 10
@@ -61,8 +61,8 @@ class Character(pg.sprite.Sprite):
             self.jump_height = -jump_height
 
         if self.jump:
-            if self.rect.bottom >= 960:
-                self.rect.y = 959 - self.rect.height
+            if self.rect.bottom >= height:
+                self.rect.y = (height - 1) - self.rect.height
                 self.jump = False
             else:
                 self.rect.y += self.jump_height
@@ -97,7 +97,7 @@ class Character(pg.sprite.Sprite):
 def main():
 
     pg.init()
-    screen = pg.display.set_mode((1280, 960), pg.SCALED)
+    screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption("Llama simulator")
 
     background = pg.Surface(screen.get_size())
