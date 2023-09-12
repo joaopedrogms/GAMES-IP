@@ -40,8 +40,7 @@ class Character(pg.sprite.Sprite):
         self.attack = 1
         self.speed = 3
 
-    def update(self, width, heigth):
-        # responsável por decidir o que o personagem vai fazer
+    def update(self, width, heigth, screen):
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
@@ -50,6 +49,7 @@ class Character(pg.sprite.Sprite):
 
         self._walk(width)
         self._jump(heigth)
+        self._spit(screen)
 
     def _jump(self, height):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
@@ -68,6 +68,35 @@ class Character(pg.sprite.Sprite):
             else:
                 self.rect.y += self.jump_height
                 self.jump_height += gravity
+
+    def _spit(self, screen):
+        j_pressed = pg.key.get_pressed()[pg.K_j]
+        z_pressed = pg.key.get_pressed()[pg.K_z]
+
+        angle = 0
+        if j_pressed or z_pressed:
+            image_spit = load_image("desenho_gota_pixelized-1.png.png")
+            image_rect = image_spit.get_rect()
+            screen.blit(image_spit, (self.rect[0] + 10, self.rect[1] + 10))
+
+            if angle == 60:
+                angle_changer = -1
+            elif angle == -60:
+                angle_changer = 1
+
+            center_x = image_rect[0]
+            center_y = image_rect[1]
+            radius = 50
+            line_vector = pg.math.Vector2(1, 0)
+            angle_changer = 1
+
+            angle += angle_changer
+            rot_vector = line_vector.rotate(angle) * radius
+            start_line = round(center_x + rot_vector.x), round(center_y + rot_vector.y)
+            end_line = round(center_x - rot_vector.x), round(center_y - rot_vector.y)
+
+            pg.draw.line(screen, (0, 0, 0), start_line, end_line, 4)  
+
 
 
     def _walk(self, width):
@@ -124,9 +153,12 @@ def main():
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
         elif going:
-            pocoyo.update(screen.get_size()[0], screen.get_size()[1])
+            pocoyo.update(screen.get_size()[0], screen.get_size()[1], screen)
 
         allsprites.update(screen.get_size()[0], screen.get_size()[1])
+
+        keys_group.update(pocoyo)
+        keys_group.draw(screen)
 
         screen.blit(background, (0, 0))
         allsprites.draw(screen)
