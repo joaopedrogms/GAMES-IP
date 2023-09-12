@@ -17,7 +17,7 @@ def load_image(name, colorkey=None, scale=0.3):
 
     size = image.get_size()
     size = (size[0] * scale, size[1] * scale)
-    image = pg.transform.scale(image, (largura/15,altura/12))
+    image = pg.transform.scale(image, (size))
 
     image = image.convert_alpha()
     if colorkey is not None:
@@ -40,6 +40,8 @@ class Character(pg.sprite.Sprite):
         self.attack = 1
         self.speed = 3
         self.chaves_coletadas = 0
+        self.chaves_prateadas_coletadas = 0
+        self.jaula_coletada = 0
 
     def update(self, width, heigth):
         top_value = self.rect[1]
@@ -113,25 +115,78 @@ class Key(pg.sprite.Sprite):
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
-            
+
+class Key_prata(pg.sprite.Sprite):
+    def __init__(self, x, y, scale=0.9):
+        pg.sprite.Sprite.__init__(self)
+        self.original_image = load_image('chave_azul.gif')
+        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.collected = False  # Inicialmente, a chave não foi coletada
+
+    def update(self, character):
+        if not self.collected:
+            if self.rect.colliderect(character.rect):
+                self.collected = True
+                character.chaves_prateadas_coletadas += 1 # Incrementa o contador de chaves coletadas no personagem
+    
+    def draw(self, screen):
+        if not self.collected:
+            screen.blit(self.image, self.rect)
+
+class Jaula(pg.sprite.Sprite):
+    def __init__(self, x, y, scale=0.5):
+        pg.sprite.Sprite.__init__(self)
+        self.original_image = load_image('jaula.png')
+        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.collected = False  # Inicialmente, a chave não foi coletada
+
+    def update(self, character):
+        if not self.collected:
+            if character.chaves_coletadas > 0 and character.chaves_prateadas_coletadas > 0 and self.rect.colliderect(character.rect):
+                self.collected = True
+                character.jaula_coletada += 1 # Incrementa o contador de chaves coletadas no personagem
+    
+    def draw(self, screen):
+        if not self.collected:
+            screen.blit(self.image, self.rect)
+
+
 
 def main():
     pg.init()
-    screen = pg.display.set_mode((640, 480), pg.SCALED)
+    screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption("Llama simulator")
+    
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
 
     background = pg.Surface(screen.get_size())
     background = background.convert()
     background = load_image('background.jpeg')
-    background = pg.transform.scale(background,(width,height))
+    background = pg.transform.scale(background,(width, height))
 
 
     # chave
     keys_group = pg.sprite.Group()
     key1 = Key(600, 650)  # Posição da chave
-    key2 = Key(400, 650)
     imagem_chave = Key(930, 30)
-    keys_group.add(key1, key2, imagem_chave)
+    keys_group.add(key1, imagem_chave)
+
+    # chave prateada
+    keys_group_prateada = pg.sprite.Group()
+    Key_prateada = Key_prata(800, 630)  # Posição da chave
+    imagem_chave_prateada = Key_prata(930, 70)
+    keys_group_prateada.add(Key_prateada, imagem_chave_prateada)
+
+    # jaula
+    jaula_group = pg.sprite.Group()
+    jaula = Jaula(950, 650)  # Posição da jaula
+    imagem_chave_prateada = Jaula(930, 120)
+    jaula_group.add(jaula)
 
     screen.blit(background, (0, 0))
     
@@ -159,18 +214,39 @@ def main():
         keys_group.update(pocoyo)
         keys_group.draw(screen)
 
+        keys_group_prateada.update(pocoyo)
+        keys_group_prateada.draw(screen)
+
+        jaula_group.update(pocoyo)
+        jaula_group.draw(screen)
+
         screen.blit(background, (0, 0))
         for key in keys_group:
             key.draw(screen)
+        
+        for key_prat in keys_group_prateada:
+            key_prat.draw(screen)
+        
+        for jaula in jaula_group:
+            jaula.draw(screen)
 
         allsprites.draw(screen)
 
         # Exibe a quantidade de chaves coletadas no canto superior direito da tela
-        mensagem = f'{pocoyo.chaves_coletadas}/2'
+        mensagem = f'{pocoyo.chaves_coletadas}/1'
+        mensagem2 = f"{pocoyo.chaves_prateadas_coletadas}/1"
         fonte = pg.font.SysFont('Arial', 30)
         texto_formatado = fonte.render(mensagem, True, (255, 255, 50))
+        texto_formatado2 = fonte.render(mensagem2, True, (150, 150, 150))
         # Define a posição da frase no canto superior direito
         screen.blit(texto_formatado, (950, 15))
+        screen.blit(texto_formatado2, (950, 55))
+
+        # Exibe a quantidade de jaulas coletadas no canto superior direito da tela
+        mensagem_jaula = f'{pocoyo.chaves_coletadas}/1'
+        texto_jaula = fonte.render(mensagem_jaula, True, (255, 255, 50))
+        screen.blit(texto_jaula, (950, 100))
+
         
         pg.display.flip()
         pg.draw.line(screen, (255,255,0), (390,300), (790,300), 50)
