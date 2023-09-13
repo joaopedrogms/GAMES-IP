@@ -26,14 +26,15 @@ def load_image(name, colorkey=None, scale=1):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey, pg.RLEACCEL)
 
-    return image, image.get_rect()
+    return image
 
 
 class Character(pg.sprite.Sprite):
 
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image, self.rect = load_image('sprite_llama.png')
+        self.image = load_image('sprite_llama.png')
+        self.rect = load_image('sprite_llama.png').get_rect()
         self.image_upper = self.rect.copy()
         self.looking = True
         self.jump = False
@@ -41,6 +42,7 @@ class Character(pg.sprite.Sprite):
         self.attack = 1
         self.speed = 3
         self.chaves_coletadas = 0
+        self.blit_spit = 'no'
 
     def update(self, width, heigth, screen):
         top_value = self.rect[1]
@@ -75,29 +77,10 @@ class Character(pg.sprite.Sprite):
         j_pressed = pg.key.get_pressed()[pg.K_j]
         z_pressed = pg.key.get_pressed()[pg.K_z]
 
-        angle = 0
         if j_pressed or z_pressed:
-            image_spit = load_image("desenho_gota_pixelized-1.png.png")
-            image_rect = image_spit.get_rect()
-            screen.blit(image_spit, (self.rect[0] + 10, self.rect[1] + 10))
-
-            if angle == 60:
-                angle_changer = -1
-            elif angle == -60:
-                angle_changer = 1
-
-            center_x = image_rect[0]
-            center_y = image_rect[1]
-            radius = 50
-            line_vector = pg.math.Vector2(1, 0)
-            angle_changer = 1
-
-            angle += angle_changer
-            rot_vector = line_vector.rotate(angle) * radius
-            start_line = round(center_x + rot_vector.x), round(center_y + rot_vector.y)
-            end_line = round(center_x - rot_vector.x), round(center_y - rot_vector.y)
-
-            pg.draw.line(screen, (0, 0, 0), start_line, end_line, 4)  
+            self.blit_spit = 'yes'
+        else:
+            self.blit_spit = 'no'      
 
 
 
@@ -174,6 +157,7 @@ def main():
     pg.display.flip()
 
     pocoyo = Character()
+ 
     allsprites = pg.sprite.RenderPlain((pocoyo))
     clock = pg.time.Clock()
 
@@ -189,7 +173,8 @@ def main():
         elif going:
             pocoyo.update(screen.get_size()[0], screen.get_size()[1], screen)
 
-        allsprites.update(screen.get_size()[0], screen.get_size()[1])
+        allsprites.update(screen.get_size()[0], screen.get_size()[1], screen)
+
 
         keys_group.update(pocoyo)
         keys_group.draw(screen)
@@ -199,6 +184,10 @@ def main():
             key.draw(screen)
 
         allsprites.draw(screen)
+
+        if pocoyo.blit_spit == 'yes':
+            screen.blit(load_image("key.jpg"), (pocoyo.rect[0] + 10, pocoyo.rect[1] + 10))
+            print(pocoyo.rect)
 
         # Exibe a quantidade de chaves coletadas no canto superior direito da tela
         mensagem = f'{pocoyo.chaves_coletadas}/2'
