@@ -42,9 +42,9 @@ class Character(pg.sprite.Sprite):
         self.attack = 1
         self.speed = 3
         self.chaves_coletadas = 0
-        self.blit_spit = 'no'
+        self.blit_spit = False
 
-    def update(self, width, heigth, screen):
+    def update(self, width, heigth):
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
@@ -53,7 +53,7 @@ class Character(pg.sprite.Sprite):
 
         self._walk(width)
         self._jump(heigth)
-        self._spit(screen)
+        self._spit()
 
     def _jump(self, height):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
@@ -73,14 +73,14 @@ class Character(pg.sprite.Sprite):
                 self.rect.y += self.jump_height
                 self.jump_height += gravity
 
-    def _spit(self, screen):
+    def _spit(self):
         j_pressed = pg.key.get_pressed()[pg.K_j]
         z_pressed = pg.key.get_pressed()[pg.K_z]
 
         if j_pressed or z_pressed:
-            self.blit_spit = 'yes'
+            self.blit_spit = True
         else:
-            self.blit_spit = 'no'      
+            self.blit_spit = False      
 
 
 
@@ -128,7 +128,62 @@ class Key(pg.sprite.Sprite):
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
-            
+
+class Attack(pg.sprite.Sprite):
+    def __init__(self):
+        pg.sprite.Sprite.__init__(self)
+        self.image = load_image("key.jpg", scale=0.1)
+        self.rect = self.image.get_rect()        
+        self.update_off = False
+        self.moving = False
+        self.to_move = 50
+        self.moved = 0
+        self.shot = False
+        self.position_i_shot = ()
+        self.position_f_shot = ()
+
+    def update(self, char_class):
+        print(char_class.rect[0])
+        if char_class.looking:
+            if self.rect[1] == 0:
+                self.rect = self.rect.move(char_class.rect[0] - self.rect[0] + 250, char_class.rect[1] - self.rect[1] + 10)
+        else:
+            if self.rect[1] == 0:
+                self.rect = self.rect.move(char_class.rect[0] - self.rect[0] - 100, char_class.rect[1] - self.rect[1] + 10)
+
+        if self.shot:
+            if self.position_f_shot[0] - self.position_i_shot[1] != 25 and self.position_f_shot[0] - self.position_i_shot[1] != -25:
+                gap = 
+
+        if char_class.looking:
+            self.to_move = -50            
+
+        self._spit()
+
+    def _spit(self):
+        print(self.rect)
+        if self.to_move < 0 and self.moved > -50:
+            self.shot = True
+            self.position_i_shot = self.rect.copy()
+            self.rect = self.rect.move(2, 0)
+            self.moved = self.moved - 2
+            if self.moved <= -50:
+                self.position_f_shot = self.rect.copy()
+                self.rect = self.rect.move(-50, 0)
+                self.moved = 0
+                self.shot = False
+    
+        if self.to_move > 0 and self.moved < 50:
+            self.shot = False
+            self.position_i_shot = self.rect.copy()
+            self.rect = self.rect.move(-2 , 0)
+            self.moved = self.moved + 2
+            if self.moved <= -50:
+                self.position_f_shot = self.rect.copy()
+                self.rect = self.rect.move(50, 0)
+                self.moved = 0
+                self.shot = False
+    
 
 def main():
     pg.init()
@@ -159,7 +214,12 @@ def main():
     pocoyo = Character()
  
     allsprites = pg.sprite.RenderPlain((pocoyo))
+    
+    pocoyo_attack = Attack()
+    attack_sprite = pg.sprite.RenderPlain((pocoyo_attack))
+    
     clock = pg.time.Clock()
+
 
     going = True
     while going:
@@ -171,9 +231,9 @@ def main():
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
         elif going:
-            pocoyo.update(screen.get_size()[0], screen.get_size()[1], screen)
+            pocoyo.update(screen.get_size()[0], screen.get_size()[1])
 
-        allsprites.update(screen.get_size()[0], screen.get_size()[1], screen)
+        allsprites.update(screen.get_size()[0], screen.get_size()[1])
 
 
         keys_group.update(pocoyo)
@@ -185,9 +245,9 @@ def main():
 
         allsprites.draw(screen)
 
-        if pocoyo.blit_spit == 'yes':
-            screen.blit(load_image("key.jpg"), (pocoyo.rect[0] + 10, pocoyo.rect[1] + 10))
-            print(pocoyo.rect)
+        pocoyo_attack.update(pocoyo)
+        if pocoyo.blit_spit == True:
+            attack_sprite.draw(screen)
 
         # Exibe a quantidade de chaves coletadas no canto superior direito da tela
         mensagem = f'{pocoyo.chaves_coletadas}/2'
