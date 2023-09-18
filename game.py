@@ -125,10 +125,10 @@ class Key(pg.sprite.Sprite):
 class Attack(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = load_image("desenho_gota_pixelized-1.png", scale=0.06)
+        self.image = load_image("desenho_gota_pixelized-1.png", scale=0.04)
         self.rect = self.image.get_rect()
         self.is_spit = False
-        self.to_move = 50
+        self.to_move = 100
         self.moved = 0
 
 
@@ -143,9 +143,9 @@ class Attack(pg.sprite.Sprite):
                     char_class.rect[0] - self.rect[0] - 100, char_class.rect[1] - self.rect[1] + 10)
 
         if char_class.looking and not self.is_spit:
-            self.to_move = 50
+            self.to_move = 100
         elif not char_class.looking and not self.is_spit:
-            self.to_move = -50    
+            self.to_move = -100    
 
         self._spit()
         self._moveSpit(char_class)
@@ -168,11 +168,11 @@ class Attack(pg.sprite.Sprite):
         if self.is_spit:
             #decide pra qual lado o cuspe vai
             if self.to_move > 0 and self.moved < self.to_move :
-                self.rect = self.rect.move(2, 0)
-                self.moved = self.moved + 2
+                self.rect = self.rect.move(6, 0)
+                self.moved = self.moved + 6
             elif self.to_move < 0 and self.moved > self.to_move :
-                self.rect = self.rect.move(-2, 0)
-                self.moved = self.moved - 2
+                self.rect = self.rect.move(-6, 0)
+                self.moved = self.moved - 6
             #traz o cuspe de volta para perto da llama    
             else:
                 self.is_spit = False
