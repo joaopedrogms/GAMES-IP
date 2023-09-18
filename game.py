@@ -28,6 +28,8 @@ def load_image(name, colorkey=None, scale=0.3):
 
     return image
 
+
+
 class Character(pg.sprite.Sprite):
 
     def __init__(self):
@@ -38,7 +40,6 @@ class Character(pg.sprite.Sprite):
         self.looking = True
         self.jump = False
         self.hp = 3
-        self.dead = False
         self.attack = 1
         self.speed = 3
         self.chaves_coletadas = 0
@@ -108,25 +109,6 @@ class Character(pg.sprite.Sprite):
             else:
                 self.image = load_image('sprite_llama.png')
 
-class Hearht:
-    def __init__(self, x, y, scale=0.3):
-        pg.sprite.Sprite.__init__(self)
-        self.original_image = load_image('heart.png')
-        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
-        self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
-        self.collected = False
-
-    def update(self, character):
-        if not self.collected:
-            if self.rect.colliderect(character.rect):
-                self.collected = True
-                character.chaves_coletadas += 1  
-    
-    def draw(self, screen):
-        if not self.collected:
-            screen.blit(self.image, self.rect)
-
 class Key(pg.sprite.Sprite):
     def __init__(self, x, y, scale=0.4):
         pg.sprite.Sprite.__init__(self)
@@ -140,7 +122,7 @@ class Key(pg.sprite.Sprite):
         if not self.collected:
             if self.rect.colliderect(character.rect):
                 self.collected = True
-                character.chaves_coletadas += 1  # Incrementa o contador de chaves coletadas no personagem
+                character.heart_coletadas += 1  # Incrementa o contador de chaves coletadas no personagem
     
     def draw(self, screen):
         if not self.collected:
@@ -215,12 +197,6 @@ def main():
     jaula = Jaula(950, 650)  # Posição da jaula
     imagem_jaula = Jaula(920, 130)
     jaula_group.add(jaula, imagem_jaula)
-
-    #corção
-    heart_group = pg.sprite.Group()
-    heart = Hearht(880, 380)  # Posição do coração
-    imagem_heart = Hearht(620, 100)
-    heart_group.add(heart, imagem_heart)
 
     screen.blit(background, (0, 0))
     
