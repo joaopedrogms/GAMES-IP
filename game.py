@@ -115,9 +115,8 @@ class Key(pg.sprite.Sprite):
         if not self.collected:
             if self.rect.colliderect(character.rect):
                 self.collected = True
-                # Incrementa o contador de chaves coletadas no personagem
-                character.chaves_coletadas += 1
-
+                character.chaves_coletadas += 1  # Incrementa o contador de chaves coletadas no personagem
+    
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
@@ -125,8 +124,9 @@ class Key(pg.sprite.Sprite):
 class Key_prata(pg.sprite.Sprite):
     def __init__(self, x, y, scale=0.5):
         pg.sprite.Sprite.__init__(self)
-        self.original_image = load_image('key.png', scale=0.3)
-        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.original_image = load_image('key.jpg', scale=0.3)
+        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width(
+        ) * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.collected = False  # Inicialmente, a chave não foi coletada
@@ -140,7 +140,7 @@ class Key_prata(pg.sprite.Sprite):
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
-            
+
 class Jaula(pg.sprite.Sprite):
     def __init__(self, x, y, scale=0.6):
         pg.sprite.Sprite.__init__(self)
@@ -155,11 +155,11 @@ class Jaula(pg.sprite.Sprite):
             if character.chaves_coletadas == 3 and character.chaves_prateadas_coletadas == 3 and self.rect.colliderect(character.rect):
                 self.collected = True
                 character.jaula_coletada += 1 # Incrementa o contador de chaves coletadas no personagem
-    
-    def draw(self, screen):
-        if not self.collected:
-            screen.blit(self.image, self.rect)
 
+    def draw(self, screen):	
+        if not self.collected:	
+            screen.blit(self.image, self.rect)            
+    
 class Attack(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
@@ -219,6 +219,7 @@ class Attack(pg.sprite.Sprite):
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
+
 
 def main():
     pg.init()
