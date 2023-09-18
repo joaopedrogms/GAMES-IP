@@ -118,9 +118,9 @@ class Key(pg.sprite.Sprite):
             screen.blit(self.image, self.rect)
 
 class Key_prata(pg.sprite.Sprite):
-    def __init__(self, x, y, scale=0.15):
+    def __init__(self, x, y, scale=0.5):
         pg.sprite.Sprite.__init__(self)
-        self.original_image = load_image('key.jpg')
+        self.original_image = load_image('key.png')
         self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
@@ -147,7 +147,7 @@ class Jaula(pg.sprite.Sprite):
 
     def update(self, character):
         if not self.collected:
-            if character.chaves_coletadas > 0 and character.chaves_prateadas_coletadas > 0 and self.rect.colliderect(character.rect):
+            if character.chaves_coletadas == 3 and character.chaves_prateadas_coletadas == 3 and self.rect.colliderect(character.rect):
                 self.collected = True
                 character.jaula_coletada += 1 # Incrementa o contador de chaves coletadas no personagem
     
@@ -172,18 +172,22 @@ def main():
     # chave
     keys_group = pg.sprite.Group()
     key1 = Key(600, 620)  # Posição da chave
-    imagem_chave = Key(930, 30)
-    keys_group.add(key1, imagem_chave)
+    key2 = Key(700, 620)
+    key3 = Key(800, 620)
+    imagem_chave = Key(915, 30)
+    keys_group.add(key1, key2, key3, imagem_chave)
 
     # chave prateada
     keys_group_prateada = pg.sprite.Group()
-    Key_prateada = Key_prata(800, 620)  # Posição da chave
-    imagem_chave_prateada = Key_prata(930, 70)
-    keys_group_prateada.add(Key_prateada, imagem_chave_prateada)
+    Key_prateada = Key_prata(300, 620)  #Posição da chave
+    Key_prateada2 = Key_prata(400, 620)
+    Key_prateada3 = Key_prata(500, 620)
+    imagem_chave_prateada = Key_prata(910, 70)
+    keys_group_prateada.add(Key_prateada, Key_prateada2, Key_prateada3, imagem_chave_prateada)
 
     # jaula
     jaula_group = pg.sprite.Group()
-    jaula = Jaula(950, 650)  # Posição da jaula
+    jaula = Jaula(940, 650)  # Posição da jaula
     imagem_jaula = Jaula(920, 130)
     jaula_group.add(jaula, imagem_jaula)
 
@@ -232,8 +236,8 @@ def main():
         allsprites.draw(screen)
 
         # Exibe a quantidade de chaves coletadas no canto superior direito da tela
-        mensagem = f'{pocoyo.chaves_coletadas}/1'
-        mensagem2 = f"{pocoyo.chaves_prateadas_coletadas}/1"
+        mensagem = f'{pocoyo.chaves_coletadas}/3'
+        mensagem2 = f"{pocoyo.chaves_prateadas_coletadas}/3"
         fonte = pg.font.SysFont('Arial', 30)
         texto_formatado = fonte.render(mensagem, True, (255, 255, 50))
         texto_formatado2 = fonte.render(mensagem2, True, (150, 150, 150))
