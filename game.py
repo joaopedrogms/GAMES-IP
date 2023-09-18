@@ -238,7 +238,7 @@ def main():
         # Exibe a quantidade de chaves coletadas no canto superior direito da tela
         mensagem = f'{pocoyo.chaves_coletadas}/3'
         mensagem2 = f"{pocoyo.chaves_prateadas_coletadas}/3"
-        fonte = pg.font.SysFont('Arial', 30)
+        fonte = pg.font.SysFont('Fixedsys', 40)
         texto_formatado = fonte.render(mensagem, True, (255, 255, 50))
         texto_formatado2 = fonte.render(mensagem2, True, (150, 150, 150))
         # Define a posição da frase no canto superior direito
