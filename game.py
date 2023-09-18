@@ -42,7 +42,6 @@ class Character(pg.sprite.Sprite):
         self.attack = 1
         self.speed = 3
         self.chaves_coletadas = 0
-        self.blit_spit = False
 
     def update(self, width, heigth):
         top_value = self.rect[1]
@@ -53,7 +52,6 @@ class Character(pg.sprite.Sprite):
 
         self._walk(width)
         self._jump(heigth)
-        self._spit()
 
     def _jump(self, height):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
@@ -73,17 +71,6 @@ class Character(pg.sprite.Sprite):
                 self.rect.y += self.jump_height
                 self.jump_height += gravity
 
-    def _spit(self):
-        j_pressed = pg.key.get_pressed()[pg.K_j]
-        z_pressed = pg.key.get_pressed()[pg.K_z]
-
-        if j_pressed or z_pressed:
-            self.blit_spit = True
-        else:
-            self.blit_spit = False      
-
-
-
     def _walk(self, width):
         d_pressed = pg.key.get_pressed()[pg.K_d]
         right_pressed = pg.key.get_pressed()[pg.K_RIGHT]
@@ -91,9 +78,9 @@ class Character(pg.sprite.Sprite):
         a_pressed = pg.key.get_pressed()[pg.K_a]
 
         if d_pressed or right_pressed:
-                self.looking = True
-                if self.rect.right < width:
-                    self.rect = self.rect.move(self.speed, 0)
+            self.looking = True
+            if self.rect.right < width:
+                self.rect = self.rect.move(self.speed, 0)
         elif left_pressed or a_pressed:
             self.looking = False
             if self.rect.left > 0:
@@ -101,20 +88,24 @@ class Character(pg.sprite.Sprite):
 
         if self.jump:
             if self.looking:
-                self.image = pg.transform.flip(load_image('sprite_llama_pulo.png'), True, False)
+                self.image = pg.transform.flip(load_image(
+                    'sprite_llama_pulo.png'), True, False)
             else:
                 self.image = load_image('sprite_llama_pulo.png')
         else:
             if self.looking:
-                self.image = pg.transform.flip(load_image('sprite_llama.png'), True, False)
+                self.image = pg.transform.flip(
+                    load_image('sprite_llama.png'), True, False)
             else:
-                self.image = load_image('sprite_llama.png')     
+                self.image = load_image('sprite_llama.png')
+
 
 class Key(pg.sprite.Sprite):
     def __init__(self, x, y, scale=0.15):
         pg.sprite.Sprite.__init__(self)
         self.original_image = load_image('key.jpg')
-        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width(
+        ) * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.collected = False  # Inicialmente, a chave não foi coletada
@@ -123,67 +114,69 @@ class Key(pg.sprite.Sprite):
         if not self.collected:
             if self.rect.colliderect(character.rect):
                 self.collected = True
-                character.chaves_coletadas += 1  # Incrementa o contador de chaves coletadas no personagem
-    
+                # Incrementa o contador de chaves coletadas no personagem
+                character.chaves_coletadas += 1
+
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
 
+
 class Attack(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
-        self.image = load_image("key.jpg", scale=0.1)
-        self.rect = self.image.get_rect()        
-        self.update_off = False
-        self.moving = False
+        self.image = load_image("desenho_gota_pixelized-1.png", scale=0.06)
+        self.rect = self.image.get_rect()
+        self.is_spit = False
         self.to_move = 50
         self.moved = 0
-        self.shot = False
-        self.position_i_shot = ()
-        self.position_f_shot = ()
+
 
     def update(self, char_class):
-        print(char_class.rect[0])
         if char_class.looking:
             if self.rect[1] == 0:
-                self.rect = self.rect.move(char_class.rect[0] - self.rect[0] + 250, char_class.rect[1] - self.rect[1] + 10)
+                self.rect = self.rect.move(
+                    char_class.rect[0] - self.rect[0] + 250, char_class.rect[1] - self.rect[1] + 10)
         else:
             if self.rect[1] == 0:
-                self.rect = self.rect.move(char_class.rect[0] - self.rect[0] - 100, char_class.rect[1] - self.rect[1] + 10)
+                self.rect = self.rect.move(
+                    char_class.rect[0] - self.rect[0] - 100, char_class.rect[1] - self.rect[1] + 10)
 
-        if self.shot:
-            if self.position_f_shot[0] - self.position_i_shot[1] != 25 and self.position_f_shot[0] - self.position_i_shot[1] != -25:
-                gap = 
-
-        if char_class.looking:
-            self.to_move = -50            
+        if char_class.looking and not self.is_spit:
+            self.to_move = 50
+        elif not char_class.looking and not self.is_spit:
+            self.to_move = -50    
 
         self._spit()
+        self._moveSpit(char_class)
 
     def _spit(self):
-        print(self.rect)
-        if self.to_move < 0 and self.moved > -50:
-            self.shot = True
-            self.position_i_shot = self.rect.copy()
-            self.rect = self.rect.move(2, 0)
-            self.moved = self.moved - 2
-            if self.moved <= -50:
-                self.position_f_shot = self.rect.copy()
-                self.rect = self.rect.move(-50, 0)
-                self.moved = 0
-                self.shot = False
-    
-        if self.to_move > 0 and self.moved < 50:
-            self.shot = False
-            self.position_i_shot = self.rect.copy()
-            self.rect = self.rect.move(-2 , 0)
-            self.moved = self.moved + 2
-            if self.moved <= -50:
-                self.position_f_shot = self.rect.copy()
-                self.rect = self.rect.move(50, 0)
-                self.moved = 0
-                self.shot = False
-    
+        j_pressed = pg.key.get_pressed()[pg.K_j]
+        z_pressed = pg.key.get_pressed()[pg.K_z]
+
+        if j_pressed or z_pressed:
+            self.is_spit = True
+
+    def _moveSpit(self, char_class):
+        if not self.is_spit:
+            if char_class.looking:
+                self.rect = self.rect.move(
+                    char_class.rect[0] - self.rect[0] + 250, char_class.rect[1] - self.rect[1] + 10)
+            else:
+                self.rect = self.rect.move(
+                    char_class.rect[0] - self.rect[0] - 100, char_class.rect[1] - self.rect[1] + 10)
+        if self.is_spit:
+            #decide pra qual lado o cuspe vai
+            if self.to_move > 0 and self.moved < self.to_move :
+                self.rect = self.rect.move(2, 0)
+                self.moved = self.moved + 2
+            elif self.to_move < 0 and self.moved > self.to_move :
+                self.rect = self.rect.move(-2, 0)
+                self.moved = self.moved - 2
+            #traz o cuspe de volta para perto da llama    
+            else:
+                self.is_spit = False
+                self.moved = 0       
 
 def main():
     pg.init()
@@ -196,8 +189,7 @@ def main():
     background = pg.Surface(screen.get_size())
     background = background.convert()
     background = load_image('background.jpeg')
-    background = pg.transform.scale(background,(width,height))
-
+    background = pg.transform.scale(background, (width, height))
 
     # chave
     keys_group = pg.sprite.Group()
@@ -207,19 +199,18 @@ def main():
     keys_group.add(key1, key2, imagem_chave)
 
     screen.blit(background, (0, 0))
-    
+
     print(pg.display.get_surface().get_size())
     pg.display.flip()
 
     pocoyo = Character()
- 
+
     allsprites = pg.sprite.RenderPlain((pocoyo))
-    
+
     pocoyo_attack = Attack()
     attack_sprite = pg.sprite.RenderPlain((pocoyo_attack))
-    
-    clock = pg.time.Clock()
 
+    clock = pg.time.Clock()
 
     going = True
     while going:
@@ -235,7 +226,6 @@ def main():
 
         allsprites.update(screen.get_size()[0], screen.get_size()[1])
 
-
         keys_group.update(pocoyo)
         keys_group.draw(screen)
 
@@ -246,7 +236,7 @@ def main():
         allsprites.draw(screen)
 
         pocoyo_attack.update(pocoyo)
-        if pocoyo.blit_spit == True:
+        if pocoyo_attack.is_spit:
             attack_sprite.draw(screen)
 
         # Exibe a quantidade de chaves coletadas no canto superior direito da tela
@@ -255,7 +245,7 @@ def main():
         texto_formatado = fonte.render(mensagem, True, (255, 255, 50))
         # Define a posição da frase no canto superior direito
         screen.blit(texto_formatado, (950, 15))
-        
+
         pg.display.flip()
 
     pg.quit()
