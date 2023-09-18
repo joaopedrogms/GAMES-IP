@@ -124,7 +124,7 @@ class Key(pg.sprite.Sprite):
 class Key_prata(pg.sprite.Sprite):
     def __init__(self, x, y, scale=0.5):
         pg.sprite.Sprite.__init__(self)
-        self.original_image = load_image('key.jpg', scale=0.3)
+        self.original_image = load_image('key.png', scale=0.3)
         self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width(
         ) * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
         self.rect = self.image.get_rect()
