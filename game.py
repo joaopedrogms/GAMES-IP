@@ -188,7 +188,7 @@ def main():
     # jaula
     jaula_group = pg.sprite.Group()
     jaula = Jaula(940, 650)  # Posição da jaula
-    imagem_jaula = Jaula(920, 130)
+    imagem_jaula = Jaula(910, 130)
     jaula_group.add(jaula, imagem_jaula)
 
     screen.blit(background, (0, 0))
