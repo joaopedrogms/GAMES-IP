@@ -95,9 +95,12 @@ class Character(pg.sprite.Sprite):
                 0, pg.display.get_surface().get_size()[1] - self.rect[3])
             self.image_upper = self.rect.copy()
 
-        colisao_chao = pg.sprite.spritecollide(self, ground_group, False)
+        if self.morangos_coletados >= 10:
+            self.hp += 1
+            self.morangos_coletados -= 10
 
         self._walk(width)
+        colisao_chao = pg.sprite.spritecollide(self, ground_group, False)
         self._jump(height, colisao_chao)
 
     def _jump(self, height, colisao):
