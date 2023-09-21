@@ -60,14 +60,14 @@ class HUD(pg.sprite.Sprite):
         chave_dourada_rect = self.chave_dourada_image.get_rect()
         chave_dourada_rect.topleft = (self.image.get_width() - 1000, 50)
         self.image.blit(self.chave_dourada_image, chave_dourada_rect)
-        chave_dourada_count = self.key_font.render(str(self.character.chaves_coletadas) + ' / 1', True, (255, 255, 50))
+        chave_dourada_count = self.key_font.render(str(self.character.chaves_coletadas), True, (255, 255, 50))
         self.image.blit(chave_dourada_count, (chave_dourada_rect.right + 10, chave_dourada_rect.centery - chave_dourada_count.get_height() // 2))
 
         #chaves azuis
         chave_azul_rect = self.chave_azul_image.get_rect()
         chave_azul_rect.topleft = (self.image.get_width() - 1000, 90)
         self.image.blit(self.chave_azul_image, chave_azul_rect)
-        chave_azul_count = self.key_font.render(str(self.character.chaves_azuis_coletadas) + ' / 1', True, (60, 135, 210))
+        chave_azul_count = self.key_font.render(str(self.character.chaves_azuis_coletadas), True, (60, 135, 210))
         self.image.blit(chave_azul_count, (chave_azul_rect.right + 10, chave_azul_rect.centery - chave_azul_count.get_height() // 2))
 
 
@@ -142,6 +142,13 @@ class Character(pg.sprite.Sprite):
             else:
                 self.image = load_image('sprite_llama.png')
 
+class Morango(pg.sprite.Sprite):
+    def __init__(self, x, y):
+        pg.sprite.Sprite.__init__(self)
+        self.image = load_image('morango.png', scale=0.16)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
 class Key(pg.sprite.Sprite):
     def __init__(self, x, y, imagem, scale):
         pg.sprite.Sprite.__init__(self)
@@ -187,20 +194,30 @@ def main():
     background = pg.transform.scale(background, (width, height))
 
     keys_group = pg.sprite.Group()
-    key_gold1 = Key(600, 620, "chave_dourada.png", 0.25)
+    key_gold1 = Key(700, 620, "chave_dourada.png", 0.25)
     key_gold2 = Key(400, 620, "chave_dourada.png", 0.25)
     key_gold3 = Key(500, 620, "chave_dourada.png", 0.25)
 
-    Key_blue1 = Key(800, 620, "chave_azul.png", 0.25)
+    Key_blue1 = Key(900, 620, "chave_azul.png", 0.25)
     Key_blue2 = Key(700, 620, "chave_azul.png", 0.25)
     Key_blue3 = Key(900, 620, "chave_azul.png", 0.25)
 
-    jaula = Key(300, 678, "image-remove.png", 1)
+    jaula = Key(300, 609, "image-remove.png", 1)
     
-    keys_group.add(
-    key_gold1, key_gold2, key_gold3,
-    Key_blue1, Key_blue2, Key_blue3,
-    jaula)
+    keys_group.add(key_gold1, Key_blue1, jaula)
+
+    #criação morangos
+    morangos_group = pg.sprite.Group()
+    morango1 = Morango(400, 620)
+    morango2 = Morango(400, 560)
+    morango3 = Morango(450, 560)
+    morango4 = Morango(450, 620)
+    morango5 = Morango(500, 620)
+    morango6 = Morango(500, 560)
+    morango7 = Morango(550, 560)
+    morango8 = Morango(550, 620)
+
+    morangos_group.add(morango1, morango2, morango3, morango4, morango5, morango6, morango7, morango8)
 
     screen.blit(background, (0, 0))
     print(pg.display.get_surface().get_size())
@@ -235,6 +252,12 @@ def main():
 
         hud_group.update()
         hud_group.draw(screen)
+
+        colisoes_morangos = pg.sprite.spritecollide(pocoyo, morangos_group, True)
+        for morango in colisoes_morangos:
+            pocoyo.morangos_coletados += 1
+
+        morangos_group.draw(screen)
 
         pg.display.flip()
 
