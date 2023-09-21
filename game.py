@@ -80,7 +80,7 @@ class Character(pg.sprite.Sprite):
         self.image_upper = self.rect.copy()
         self.looking = True
         self.jump = False
-        self.hp = 5
+        self.hp = 3
         self.attack = 1
         self.speed = 3
         self.chaves_coletadas = 0
@@ -191,7 +191,7 @@ class Ground(pg.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         self.image = pg.Surface((width, height), pg.SRCALPHA)
-        self.image.fill((0, 0, 0, 0))
+        self.image.fill((0, 100, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 def main():
@@ -220,7 +220,7 @@ def main():
     keys_group.add(key_gold1, Key_blue1, jaula)
 
     #criação morangos
-    morangos_group = pg.sprite.Group()
+    morangos = pg.sprite.Group()
     morango1 = Morango(400, 620)
     morango2 = Morango(400, 560)
     morango3 = Morango(450, 560)
@@ -237,12 +237,13 @@ def main():
     morango14 = Morango(300, 620)
     morango15 = Morango(350, 560)
     morango16 = Morango(350, 620)
+    morangos.add(morango1, morango2, morango3, morango4, morango5, morango6, morango7, morango8, morango9, morango10, morango11, morango12, morango13, morango14, morango15, morango16)
 
     #criação do chão
-    ground = Ground(0, 690, 1080, 70)
-    grounds = pg.sprite.Group(ground)
-
-    morangos_group.add(morango1, morango2, morango3, morango4, morango5, morango6, morango7, morango8, morango9, morango10, morango11, morango12, morango13, morango14, morango15, morango16)
+    grounds = pg.sprite.Group()
+    ground = Ground(0, 687, 1080, 70)
+    plataforma1 = Ground(500, 400, 50, 50)
+    grounds.add(ground)
 
     screen.blit(background, (0, 0))
     print(pg.display.get_surface().get_size())
@@ -281,11 +282,11 @@ def main():
 
         grounds.draw(screen)
 
-        colisoes_morangos = pg.sprite.spritecollide(pocoyo, morangos_group, True)
+        colisoes_morangos = pg.sprite.spritecollide(pocoyo, morangos, True)
         for morango in colisoes_morangos:
             pocoyo.morangos_coletados += 1
 
-        morangos_group.draw(screen)
+        morangos.draw(screen)
 
         pg.display.flip()
 
