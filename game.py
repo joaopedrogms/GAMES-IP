@@ -51,21 +51,21 @@ class HUD(pg.sprite.Sprite):
 
         #morangos
         morango_rect = self.morango_image.get_rect()
-        morango_rect.topleft = (self.image.get_width() - 990, 10)
+        morango_rect.topleft = (self.image.get_width() - 920, 10)
         self.image.blit(self.morango_image, morango_rect)
         morango_count = self.key_font.render(str(self.character.morangos_coletados), True, (255, 0, 0))
         self.image.blit(morango_count, (morango_rect.right + 10, morango_rect.centery))
 
         #chaves amarelas
         chave_dourada_rect = self.chave_dourada_image.get_rect()
-        chave_dourada_rect.topleft = (self.image.get_width() - 1000, 50)
+        chave_dourada_rect.topleft = (self.image.get_width() - 930, 50)
         self.image.blit(self.chave_dourada_image, chave_dourada_rect)
         chave_dourada_count = self.key_font.render(str(self.character.chaves_coletadas), True, (255, 255, 50))
         self.image.blit(chave_dourada_count, (chave_dourada_rect.right + 10, chave_dourada_rect.centery - chave_dourada_count.get_height() // 2))
 
         #chaves azuis
         chave_azul_rect = self.chave_azul_image.get_rect()
-        chave_azul_rect.topleft = (self.image.get_width() - 1000, 90)
+        chave_azul_rect.topleft = (self.image.get_width() - 930, 90)
         self.image.blit(self.chave_azul_image, chave_azul_rect)
         chave_azul_count = self.key_font.render(str(self.character.chaves_azuis_coletadas), True, (60, 135, 210))
         self.image.blit(chave_azul_count, (chave_azul_rect.right + 10, chave_azul_rect.centery - chave_azul_count.get_height() // 2))
@@ -88,33 +88,39 @@ class Character(pg.sprite.Sprite):
         self.jaula_coletada = 0
         self.morangos_coletados = 0
 
-    def update(self, width, heigth):
+    def update(self, width, height, ground_group):
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
                 0, pg.display.get_surface().get_size()[1] - self.rect[3])
             self.image_upper = self.rect.copy()
 
-        self._walk(width)
-        self._jump(heigth)
+        colisao_chao = pg.sprite.spritecollide(self, ground_group, False)
 
-    def _jump(self, height):
+        self._walk(width)
+        self._jump(height, colisao_chao)
+
+    def _jump(self, height, colisao):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
         w_pressed = pg.key.get_pressed()[pg.K_w]
         jump_height = 10
         gravity = 0.3
 
-        if (w_pressed or up_pressed) and not self.jump:
-            self.jump = True
-            self.jump_height = -jump_height
+        if colisao:
+            self.rect.y = colisao[0].rect.top - self.rect.height
+            self.jump = False
+        else:
+            if (w_pressed or up_pressed) and not self.jump:
+                self.jump = True
+                self.jump_height = -jump_height
 
-        if self.jump:
-            if self.rect.bottom >= height:
-                self.rect.y = (height - 1) - self.rect.height
-                self.jump = False
-            else:
-                self.rect.y += self.jump_height
-                self.jump_height += gravity
+            if self.jump:
+                if self.rect.bottom >= height:
+                    self.rect.y = (height - 1) - self.rect.height
+                    self.jump = False
+                else:
+                    self.rect.y += self.jump_height
+                    self.jump_height += gravity
 
     def _walk(self, width):
         d_pressed = pg.key.get_pressed()[pg.K_d]
@@ -173,7 +179,7 @@ class Key(pg.sprite.Sprite):
                 character.chaves_azuis_coletadas += 1
 
         if not self.collected:
-            if character.chaves_coletadas == 3 and character.chaves_azuis_coletadas == 3 and self.rect.colliderect(character.rect):
+            if character.chaves_coletadas == 1 and character.chaves_azuis_coletadas == 1 and self.rect.colliderect(character.rect):
                 self.collected = True
                 character.jaula_coletada += 1
 
@@ -181,6 +187,13 @@ class Key(pg.sprite.Sprite):
         if not self.collected:
             screen.blit(self.image, self.rect)
 
+class Ground(pg.sprite.Sprite):
+    def __init__(self, x, y, width, height):
+        super().__init__()
+        self.image = pg.Surface((width, height), pg.SRCALPHA)
+        self.image.fill((0, 0, 0, 0))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
 def main():
     pg.init()
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
@@ -190,7 +203,7 @@ def main():
     height = screen.get_size()[1]
 
     background = pg.Surface(screen.get_size())
-    background = load_image('background.png')
+    background = load_image('background.png', scale=1)
     background = pg.transform.scale(background, (width, height))
 
     keys_group = pg.sprite.Group()
@@ -202,7 +215,7 @@ def main():
     Key_blue2 = Key(700, 620, "chave_azul.png", 0.25)
     Key_blue3 = Key(900, 620, "chave_azul.png", 0.25)
 
-    jaula = Key(300, 609, "image-remove.png", 1)
+    jaula = Key(1000, 604, "image-remove.png", 1)
     
     keys_group.add(key_gold1, Key_blue1, jaula)
 
@@ -216,8 +229,20 @@ def main():
     morango6 = Morango(500, 560)
     morango7 = Morango(550, 560)
     morango8 = Morango(550, 620)
+    morango9 = Morango(200, 560)
+    morango10 = Morango(200, 620)
+    morango11 = Morango(250, 560)
+    morango12 = Morango(250, 620)
+    morango13 = Morango(300, 560)
+    morango14 = Morango(300, 620)
+    morango15 = Morango(350, 560)
+    morango16 = Morango(350, 620)
 
-    morangos_group.add(morango1, morango2, morango3, morango4, morango5, morango6, morango7, morango8)
+    #criação do chão
+    ground = Ground(0, 690, 1080, 70)
+    grounds = pg.sprite.Group(ground)
+
+    morangos_group.add(morango1, morango2, morango3, morango4, morango5, morango6, morango7, morango8, morango9, morango10, morango11, morango12, morango13, morango14, morango15, morango16)
 
     screen.blit(background, (0, 0))
     print(pg.display.get_surface().get_size())
@@ -228,7 +253,7 @@ def main():
     clock = pg.time.Clock()
 
     hud = HUD(pocoyo)
-    hud_group = pg.sprite.Group(hud)
+    huds = pg.sprite.Group(hud)
 
     going = True
     while going:
@@ -240,18 +265,21 @@ def main():
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
         elif going:
-            pocoyo.update(screen.get_size()[0], screen.get_size()[1])
+            pocoyo.update(screen.get_size()[0], screen.get_size()[1], grounds)
 
         keys_group.update(pocoyo)
 
         screen.blit(background, (0, 0))
+
         for key in keys_group:
             key.draw(screen)
-        allsprites.update(screen.get_size()[0], screen.get_size()[1])
+        allsprites.update(screen.get_size()[0], screen.get_size()[1], grounds)
         allsprites.draw(screen)
 
-        hud_group.update()
-        hud_group.draw(screen)
+        huds.update()
+        huds.draw(screen)
+
+        grounds.draw(screen)
 
         colisoes_morangos = pg.sprite.spritecollide(pocoyo, morangos_group, True)
         for morango in colisoes_morangos:
