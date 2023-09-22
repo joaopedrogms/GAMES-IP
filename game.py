@@ -10,6 +10,8 @@ if not pg.mixer:
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, "media")
 
+gravity = 0.3
+
 def load_image(name, colorkey=None, scale=0.3):
     fullpath = os.path.join(data_dir, 'img')
     fullname = os.path.join(fullpath, name)
@@ -82,13 +84,14 @@ class Character(pg.sprite.Sprite):
         self.jump = False
         self.hp = 3
         self.attack = 1
-        self.speed = 3
+        self.speed = 2
         self.chaves_coletadas = 0
         self.chaves_azuis_coletadas = 0
-        self.jaula_coletada = False
+        self.jaula_coletada = 0
         self.morangos_coletados = 0
+        self.velocity_y = 0
 
-    def update(self, width, height, grounds):
+    def update(self, width, height, ground_group):
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
@@ -100,13 +103,22 @@ class Character(pg.sprite.Sprite):
             self.morangos_coletados -= 10
 
         self._walk(width)
-        colisao_chao = pg.sprite.spritecollide(self, grounds, False)
+        # verifica a colisão com o chão
+        colisao_chao = pg.sprite.spritecollide(self, ground_group, False)
         self._jump(height, colisao_chao)
 
+        if not colisao_chao:
+            self.velocity_y += gravity  # aplica a gravidade
+        else:
+            self.velocity_y = 0  # Reset da velocidade vertical quando estiver no chão
+
+        self.rect.y += self.velocity_y  # Atualiza a posição vertical com base na velocidade vertical
+
+        self._walk(width)
     def _jump(self, height, colisao):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
         w_pressed = pg.key.get_pressed()[pg.K_w]
-        jump_height = 10
+        jump_height = 12
         gravity = 0.3
 
         if colisao:
@@ -119,7 +131,7 @@ class Character(pg.sprite.Sprite):
 
             if self.jump:
                 if self.rect.bottom >= height:
-                    self.rect.y = height - self.rect.height
+                    self.rect.y = (height - 1) - self.rect.height
                     self.jump = False
                 else:
                     self.rect.y += self.jump_height
@@ -151,62 +163,33 @@ class Character(pg.sprite.Sprite):
             else:
                 self.image = load_image('sprite_llama.png')
 
-class FemLlama(pg.sprite.Sprite):
-    def __init__(self, x, y):
-        pg.sprite.Sprite.__init__(self)
-        self.image = load_image('fem_llama.png', scale=0.3)
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-        self.jump = False
-
-    def _jump(self, height, grounds):
-        colisao = pg.sprite.spritecollide(self, grounds, False)
-        jump_height = 19
-        gravity = 1.2
-
-        if colisao:
-            self.image = load_image('fem_llama.png', scale=0.3)
-            self.rect.y = colisao[0].rect.top - self.rect.height
-            self.jump = False
-        else:
-            self.image = load_image('fem_llama_pulo.png', scale=0.3)
-            if not self.jump:
-                self.jump = True
-                self.jump_height = -jump_height
-
-            if self.jump:
-                if self.rect.bottom >= height:
-                    self.rect.y = height - self.rect.height
-                    self.jump = False
-                else:
-                    self.rect.y += self.jump_height
-                    self.jump_height += gravity
 class Morango(pg.sprite.Sprite):
     def __init__(self, x, y):
         pg.sprite.Sprite.__init__(self)
-        self.image = load_image('morango.png', scale=0.16)
+        self.image = load_image('morango.png', scale=0.15)
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
 class Key(pg.sprite.Sprite):
-    def __init__(self, x, y, imagem, scale):
+    def __init__(self, x, y, imagem, tamanho):
         pg.sprite.Sprite.__init__(self)
-        self.figura = imagem
-        self.scale = scale
-        self.original_image = load_image(self.figura)
-        self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.imagem = imagem
+        self.image = load_image(self.imagem, scale=tamanho)
         self.rect = self.image.get_rect()
+        #self.original_image = load_image(self.figura, scale=0.25)
+        #self.image = pg.transform.scale(self.original_image, (int(self.original_image.get_width() * scale), int(self.original_image.get_height() * scale)))  # Aplica a escala à imagem
+        self.rect.topleft = (x, y)
         
-        self.rect.center = (x, y)
+        #self.rect.center = (x, y)
         self.collected = False
 
     def update(self, character):
-        if not self.collected and self.figura == "chave_dourada.png":
+        if not self.collected and self.imagem == "chave_dourada.png":
             if self.rect.colliderect(character.rect):
                 self.collected = True
                 character.chaves_coletadas += 1
     
-        if not self.collected and self.figura == "chave_azul.png":
+        if not self.collected and self.imagem == "chave_azul.png":
             if self.rect.colliderect(character.rect):
                 self.collected = True
                 character.chaves_azuis_coletadas += 1
@@ -214,23 +197,22 @@ class Key(pg.sprite.Sprite):
         if not self.collected:
             if character.chaves_coletadas == 1 and character.chaves_azuis_coletadas == 1 and self.rect.colliderect(character.rect):
                 self.collected = True
-                character.jaula_coletada = True
+                character.jaula_coletada += 1
 
     def draw(self, screen):
         if not self.collected:
             screen.blit(self.image, self.rect)
 
 class Ground(pg.sprite.Sprite):
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, tranparencia):
         super().__init__()
         self.image = pg.Surface((width, height), pg.SRCALPHA)
-        self.image.fill((0, 0, 0, 0))
+        self.image.fill((0, 100, 0, tranparencia))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
-def main():
-    global sprites_behind_player
-    sprites_behind_player = pg.sprite.Group()
 
+
+def main():
     pg.init()
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption("Llama simulator")
@@ -243,57 +225,53 @@ def main():
     background = pg.transform.scale(background, (width, height))
 
     keys_group = pg.sprite.Group()
-    key_gold1 = Key(700, 620, "chave_dourada.png", 0.25)
-    key_gold2 = Key(400, 620, "chave_dourada.png", 0.25)
-    key_gold3 = Key(500, 620, "chave_dourada.png", 0.25)
-
-    Key_blue1 = Key(900, 620, "chave_azul.png", 0.25)
-    Key_blue2 = Key(700, 620, "chave_azul.png", 0.25)
-    Key_blue3 = Key(900, 620, "chave_azul.png", 0.25)
-
-    jaula = Key(1000, 604, "image-remove.png", 1)
-    
+    key_gold1 = Key(900, 500, "chave_dourada.png", 0.08)
+    Key_blue1 = Key(450, 250, "chave_azul.png", 0.08)
+    jaula = Key(900, 50, "image-remove.png", 0.2)
     keys_group.add(key_gold1, Key_blue1, jaula)
+
 
     #criação morangos
     morangos = pg.sprite.Group()
-    morango1 = Morango(400, 620)
-    morango2 = Morango(400, 560)
-    morango3 = Morango(450, 560)
-    morango4 = Morango(450, 620)
-    morango5 = Morango(500, 620)
-    morango6 = Morango(500, 560)
-    morango7 = Morango(550, 560)
-    morango8 = Morango(550, 620)
-    morango9 = Morango(200, 560)
-    morango10 = Morango(200, 620)
-    morango11 = Morango(250, 560)
-    morango12 = Morango(250, 620)
-    morango13 = Morango(300, 560)
-    morango14 = Morango(300, 620)
-    morango15 = Morango(350, 560)
-    morango16 = Morango(350, 620)
-    morangos.add(morango1, morango2, morango3, morango4, morango5, morango6, morango7, morango8, morango9, morango10, morango11, morango12, morango13, morango14, morango15, morango16)
+    morango1 = Morango(850, 500)
+    morango2 = Morango(410, 500)
+    morango3 = Morango(480, 500)
+    morango4 = Morango(550, 500)
+    morango5 = Morango(35, 420)
+    morango6 = Morango(250, 250)
+    morango7 = Morango(400, 250)
+    morango8 = Morango(35, 100)
+    morango9 = Morango(105, 100)
+    morango10 = Morango(175, 100)
+    morango11 = Morango(700, 150)
+ 
+    morangos.add(morango1, morango2, morango3, morango4, morango5, morango6, morango7, morango8, morango9, morango10, morango11)
+
 
     #criação do chão
     grounds = pg.sprite.Group()
-    ground = Ground(0, 687, 1080, 70)
-    plataforma1 = Ground(500, 400, 50, 50)
-    grounds.add(ground)
+    ground = Ground(0, 687, 1080, 70, 0)
+    plataforma1 = Ground(800, 550, 200, 10, 255)
+    plataforma2 = Ground(400, 550, 200, 10, 255)
+    plataforma3 = Ground(30, 470, 150, 10, 255)
+    plataforma4 = Ground(200, 300, 300, 10, 255)
+    plataforma7 = Ground(600, 200, 180, 10, 255)
+    plataforma8 = Ground(30, 150, 180, 10, 255)
+    plataforma5 = Ground(800, 150, 200, 10, 255)
+
+
+    #plataforma1 = Ground(500, 400, 50, 50)
+    grounds.add(ground, plataforma1, plataforma5, plataforma2, plataforma3, plataforma4, plataforma7, plataforma8)
 
     screen.blit(background, (0, 0))
     print(pg.display.get_surface().get_size())
     pg.display.flip()
 
-    fem_llama = None
-    contador_pulo = 0
-    llama = Character()
-
-    global allsprites
-    allsprites = pg.sprite.RenderPlain(llama)
+    pocoyo = Character()
+    allsprites = pg.sprite.RenderPlain((pocoyo))
     clock = pg.time.Clock()
 
-    hud = HUD(llama)
+    hud = HUD(pocoyo)
     huds = pg.sprite.Group(hud)
 
     going = True
@@ -306,26 +284,15 @@ def main():
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
         elif going:
-            llama.update(screen.get_size()[0], screen.get_size()[1], grounds)
+            pocoyo.update(screen.get_size()[0], screen.get_size()[1], grounds)
 
-        keys_group.update(llama)
+        keys_group.update(pocoyo)
 
         screen.blit(background, (0, 0))
 
-        sprites_behind_player.draw(screen)
-
-        if llama.jaula_coletada:
-            if fem_llama != None:
-                if contador_pulo < 90:
-                    contador_pulo += 1
-                else:
-                    fem_llama._jump(screen.get_size()[1], grounds)
-            else:
-                fem_llama = FemLlama(965, 600)
-                sprites_behind_player.add(fem_llama)
-
         for key in keys_group:
             key.draw(screen)
+
         allsprites.update(screen.get_size()[0], screen.get_size()[1], grounds)
         allsprites.draw(screen)
 
@@ -334,9 +301,9 @@ def main():
 
         grounds.draw(screen)
 
-        colisoes_morangos = pg.sprite.spritecollide(llama, morangos, True)
+        colisoes_morangos = pg.sprite.spritecollide(pocoyo, morangos, True)
         for morango in colisoes_morangos:
-            llama.morangos_coletados += 1
+            pocoyo.morangos_coletados += 1
 
         morangos.draw(screen)
 
