@@ -32,7 +32,7 @@ class HUD(pg.sprite.Sprite):
         self.morango_image = load_image('morango.png', scale=0.16)
         self.rect = self.heart_image.get_rect()
         self.rect.topleft = (10, 10)
-        self.key_font = pg.font.Font('Daydream.ttf', 15)
+        self.key_font = pg.font.Font('daydream.ttf', 15)
 
     def update(self):
         self.image = pg.Surface((1900, 1900), pg.SRCALPHA)
