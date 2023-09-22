@@ -241,6 +241,8 @@ def main():
     pg.init()
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption('Llama simulator')
+    icon = pg.image.load('icon.png')
+    pg.display.set_icon(icon)
 
     width = screen.get_size()[0]
     height = screen.get_size()[1]
