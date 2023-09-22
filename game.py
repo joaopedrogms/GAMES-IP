@@ -85,10 +85,10 @@ class Character(pg.sprite.Sprite):
         self.speed = 3
         self.chaves_coletadas = 0
         self.chaves_azuis_coletadas = 0
-        self.jaula_coletada = 0
+        self.jaula_coletada = False
         self.morangos_coletados = 0
 
-    def update(self, width, height, ground_group):
+    def update(self, width, height, grounds):
         top_value = self.rect[1]
         if top_value == 0:
             self.rect = self.rect.move(
@@ -100,7 +100,7 @@ class Character(pg.sprite.Sprite):
             self.morangos_coletados -= 10
 
         self._walk(width)
-        colisao_chao = pg.sprite.spritecollide(self, ground_group, False)
+        colisao_chao = pg.sprite.spritecollide(self, grounds, False)
         self._jump(height, colisao_chao)
 
     def _jump(self, height, colisao):
@@ -119,7 +119,7 @@ class Character(pg.sprite.Sprite):
 
             if self.jump:
                 if self.rect.bottom >= height:
-                    self.rect.y = (height - 1) - self.rect.height
+                    self.rect.y = height - self.rect.height
                     self.jump = False
                 else:
                     self.rect.y += self.jump_height
@@ -151,6 +151,36 @@ class Character(pg.sprite.Sprite):
             else:
                 self.image = load_image('sprite_llama.png')
 
+class FemLlama(pg.sprite.Sprite):
+    def __init__(self, x, y):
+        pg.sprite.Sprite.__init__(self)
+        self.image = load_image('fem_llama.png', scale=0.3)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+        self.jump = False
+
+    def _jump(self, height, grounds):
+        colisao = pg.sprite.spritecollide(self, grounds, False)
+        jump_height = 19
+        gravity = 1.2
+
+        if colisao:
+            self.image = load_image('fem_llama.png', scale=0.3)
+            self.rect.y = colisao[0].rect.top - self.rect.height
+            self.jump = False
+        else:
+            self.image = load_image('fem_llama_pulo.png', scale=0.3)
+            if not self.jump:
+                self.jump = True
+                self.jump_height = -jump_height
+
+            if self.jump:
+                if self.rect.bottom >= height:
+                    self.rect.y = height - self.rect.height
+                    self.jump = False
+                else:
+                    self.rect.y += self.jump_height
+                    self.jump_height += gravity
 class Morango(pg.sprite.Sprite):
     def __init__(self, x, y):
         pg.sprite.Sprite.__init__(self)
@@ -184,7 +214,7 @@ class Key(pg.sprite.Sprite):
         if not self.collected:
             if character.chaves_coletadas == 1 and character.chaves_azuis_coletadas == 1 and self.rect.colliderect(character.rect):
                 self.collected = True
-                character.jaula_coletada += 1
+                character.jaula_coletada = True
 
     def draw(self, screen):
         if not self.collected:
@@ -194,10 +224,13 @@ class Ground(pg.sprite.Sprite):
     def __init__(self, x, y, width, height):
         super().__init__()
         self.image = pg.Surface((width, height), pg.SRCALPHA)
-        self.image.fill((0, 100, 0, 0))
+        self.image.fill((0, 0, 0, 0))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 def main():
+    global sprites_behind_player
+    sprites_behind_player = pg.sprite.Group()
+
     pg.init()
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption("Llama simulator")
@@ -252,11 +285,15 @@ def main():
     print(pg.display.get_surface().get_size())
     pg.display.flip()
 
-    pocoyo = Character()
-    allsprites = pg.sprite.RenderPlain((pocoyo))
+    fem_llama = None
+    contador_pulo = 0
+    llama = Character()
+
+    global allsprites
+    allsprites = pg.sprite.RenderPlain(llama)
     clock = pg.time.Clock()
 
-    hud = HUD(pocoyo)
+    hud = HUD(llama)
     huds = pg.sprite.Group(hud)
 
     going = True
@@ -269,11 +306,23 @@ def main():
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
         elif going:
-            pocoyo.update(screen.get_size()[0], screen.get_size()[1], grounds)
+            llama.update(screen.get_size()[0], screen.get_size()[1], grounds)
 
-        keys_group.update(pocoyo)
+        keys_group.update(llama)
 
         screen.blit(background, (0, 0))
+
+        sprites_behind_player.draw(screen)
+
+        if llama.jaula_coletada:
+            if fem_llama != None:
+                if contador_pulo < 90:
+                    contador_pulo += 1
+                else:
+                    fem_llama._jump(screen.get_size()[1], grounds)
+            else:
+                fem_llama = FemLlama(965, 600)
+                sprites_behind_player.add(fem_llama)
 
         for key in keys_group:
             key.draw(screen)
@@ -285,9 +334,9 @@ def main():
 
         grounds.draw(screen)
 
-        colisoes_morangos = pg.sprite.spritecollide(pocoyo, morangos, True)
+        colisoes_morangos = pg.sprite.spritecollide(llama, morangos, True)
         for morango in colisoes_morangos:
-            pocoyo.morangos_coletados += 1
+            llama.morangos_coletados += 1
 
         morangos.draw(screen)
 
