@@ -138,7 +138,10 @@ def main():
 
         for collectable in colllectables_group:
             collectable.draw(screen)
-        
+
+        if pg.key.get_pressed()[pg.K_f]:
+            pg.display.toggle_fullscreen()
+
         allsprites.draw(screen)
 
         pg.sprite.Group(hud).update()
