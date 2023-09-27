@@ -10,8 +10,6 @@ from platforms import *
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, 'media')
 
-blue_keys = 10
-
 def load_image(name, colorkey=None, scale=0.3):
     fullpath = os.path.join(data_dir, 'img')
     fullname = os.path.join(fullpath, name)
@@ -127,10 +125,12 @@ def main():
         sprites_behind_player.draw(screen)
 
         if llama.cage_collected:
+            llama.can_jump = False
             if princess != None:
                 if wait_jump_count < 90:
                     wait_jump_count += 1
                 else:
+                    llama.can_jump = True
                     princess._jump(screen.get_size()[1], platforms_group)
             else:
                 princess = Princess(965, 600)

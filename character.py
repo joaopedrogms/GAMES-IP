@@ -10,6 +10,7 @@ class Character(pg.sprite.Sprite):
         self.image_upper = self.rect.copy()
         self.looking = True
         self.jump = False
+        self.can_jump = True
         self.hp = 3
         self.new_hp = 0
         self.attack = 1
@@ -18,6 +19,7 @@ class Character(pg.sprite.Sprite):
         self.blue_keys_collected = 0
         self.cage_collected = False
         self.strawberries_collected = 0
+        self.rect.bottomleft = (0, 687)
 
     def update(self, width, height, grounds):
         top_value = self.rect[1]
@@ -31,13 +33,19 @@ class Character(pg.sprite.Sprite):
             self.new_hp += 1
             self.strawberries_collected -= 10
 
-        self._walk(width)
-        colisao_chao = pg.sprite.spritecollide(self, grounds, False)
-        self._jump(height, colisao_chao)
+        self.animation()
+        if not self.cage_collected:
+            self._walk(width)
+        if self.can_jump:
+            self._jump(height, pg.sprite.spritecollide(self, grounds, False))
 
     def _jump(self, height, colisao):
-        up_pressed = pg.key.get_pressed()[pg.K_UP]
-        w_pressed = pg.key.get_pressed()[pg.K_w]
+        if self.cage_collected:
+            up_pressed = True
+            w_pressed = True
+        else:
+            up_pressed = pg.key.get_pressed()[pg.K_UP]
+            w_pressed = pg.key.get_pressed()[pg.K_w]
         jump_height = 10
         gravity = 0.3
 
@@ -72,6 +80,7 @@ class Character(pg.sprite.Sprite):
             if self.rect.left > 0:
                 self.rect = self.rect.move(-self.speed, 0)
 
+    def animation(self):
         if self.jump:
             if self.looking:
                 self.image = pg.transform.flip(load_image('sprite_llama_pulo.png'), True, False)
