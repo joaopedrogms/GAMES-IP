@@ -1,4 +1,5 @@
 import pygame as pg
+import os
 
 class HUD(pg.sprite.Sprite):
     def __init__(self, character):
@@ -6,43 +7,42 @@ class HUD(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.character = character
         self.heart_image = load_image('coracao.png', scale=0.06)
-        self.chave_dourada_image = load_image('chave_dourada.png', scale=0.065)
-        self.chave_azul_image = load_image('chave_azul.png', scale=0.065)
-        self.morango_image = load_image('morango.png', scale=0.16)
+        self.yellow_key_image = load_image('yellow_key.png', scale=0.065)
+        self.blue_key_image = load_image('blue_key.png', scale=0.065)
+        self.strawberry_image = load_image('strawberry.png', scale=0.16)
         self.rect = self.heart_image.get_rect()
         self.rect.topleft = (10, 10)
-        self.key_font = pg.font.Font('daydream.ttf', 15)
+        self.key_font = pg.font.Font(os.path.join('media', 'font', 'daydream.ttf'), 15)
 
     def update(self):
         self.image = pg.Surface((1900, 1900), pg.SRCALPHA)
-        self.image.fill((0, 0, 0, 0))
 
-        # corações
+        # hearts
         heart_x = 10
         for _ in range(self.character.hp):
             self.image.blit(self.heart_image, (heart_x, 10))
             heart_x += 40
 
-        # morangos
-        morango_rect = self.morango_image.get_rect()
-        morango_rect.topleft = (self.image.get_width() - 920, 10)
-        self.image.blit(self.morango_image, morango_rect)
-        morango_count = self.key_font.render(str(self.character.morangos_coletados + (self.character.vidas_adicionadas * 10)), True, (255, 0, 0))
-        self.image.blit(morango_count, (morango_rect.right + 10, morango_rect.centery))
+        # strawberries
+        strawberry_rect = self.strawberry_image.get_rect()
+        strawberry_rect.topleft = (self.image.get_width() - 920, 10)
+        self.image.blit(self.strawberry_image, strawberry_rect)
+        strawberry_count = self.key_font.render(str(self.character.strawberries_collected + (self.character.vidas_adicionadas * 10)), True, (255, 0, 0))
+        self.image.blit(strawberry_count, (strawberry_rect.right + 10, strawberry_rect.centery))
 
-        # chaves amarelas
-        chave_dourada_rect = self.chave_dourada_image.get_rect()
-        chave_dourada_rect.topleft = (self.image.get_width() - 930, 50)
-        self.image.blit(self.chave_dourada_image, chave_dourada_rect)
-        chave_dourada_count = self.key_font.render(str(self.character.chaves_coletadas), True, (255, 255, 50))
-        self.image.blit(chave_dourada_count, (
-        chave_dourada_rect.right + 10, chave_dourada_rect.centery - chave_dourada_count.get_height() // 2))
+        # yellow keys
+        yellow_key_rect = self.yellow_key_image.get_rect()
+        yellow_key_rect.topleft = (self.image.get_width() - 930, 50)
+        self.image.blit(self.yellow_key_image, yellow_key_rect)
+        yellow_key_count = self.key_font.render(str(self.character.yellow_keys_collected), True, (255, 255, 50))
+        self.image.blit(yellow_key_count, (
+        yellow_key_rect.right + 10, yellow_key_rect.centery - yellow_key_count.get_height() // 2))
 
-        # chaves azuis
-        chave_azul_rect = self.chave_azul_image.get_rect()
-        chave_azul_rect.topleft = (self.image.get_width() - 930, 90)
-        self.image.blit(self.chave_azul_image, chave_azul_rect)
-        chave_azul_count = self.key_font.render(str(self.character.chaves_azuis_coletadas), True, (60, 135, 210))
-        self.image.blit(chave_azul_count,
-                        (chave_azul_rect.right + 10, chave_azul_rect.centery - chave_azul_count.get_height() // 2))
+        # blue keys
+        blue_key_rect = self.blue_key_image.get_rect()
+        blue_key_rect.topleft = (self.image.get_width() - 930, 90)
+        self.image.blit(self.blue_key_image, blue_key_rect)
+        blue_key_count = self.key_font.render(str(self.character.blue_keys_collected), True, (60, 135, 210))
+        self.image.blit(blue_key_count,
+                        (blue_key_rect.right + 10, blue_key_rect.centery - blue_key_count.get_height() // 2))
 

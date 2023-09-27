@@ -15,10 +15,10 @@ class Character(pg.sprite.Sprite):
         self.vidas_adicionadas = 0
         self.attack = 1
         self.speed = 3
-        self.chaves_coletadas = 0
-        self.chaves_azuis_coletadas = 0
+        self.yellow_keys_collected = 0
+        self.blue_keys_collected = 0
         self.jaula_coletada = False
-        self.morangos_coletados = 0
+        self.strawberries_collected = 0
 
     def update(self, width, height, grounds):
         top_value = self.rect[1]
@@ -27,10 +27,10 @@ class Character(pg.sprite.Sprite):
                 0, pg.display.get_surface().get_size()[1] - self.rect[3])
             self.image_upper = self.rect.copy()
 
-        if self.morangos_coletados >= 10:
+        if self.strawberries_collected >= 10:
             self.hp += 1
             self.vidas_adicionadas += 1
-            self.morangos_coletados -= 10
+            self.strawberries_collected -= 10
 
         self._walk(width)
         colisao_chao = pg.sprite.spritecollide(self, grounds, False)
