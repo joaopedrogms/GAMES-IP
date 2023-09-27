@@ -2,6 +2,7 @@ import pygame as pg
 from pygame.locals import *
 from main import *
 
+#classe do personagem controlável pelo jogador 
 class Character(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
@@ -39,6 +40,7 @@ class Character(pg.sprite.Sprite):
         if self.can_jump:
             self._jump(height, pg.sprite.spritecollide(self, grounds, False))
 
+    #pulo do personagem
     def _jump(self, height, colisao):
         if self.cage_collected:
             up_pressed = True
@@ -49,6 +51,7 @@ class Character(pg.sprite.Sprite):
         jump_height = 10
         gravity = 0.3
 
+        #observa se o personagem está colidindo com o chão ou pulando
         if colisao:
             self.rect.y = colisao[0].rect.top - self.rect.height
             self.jump = False
@@ -65,6 +68,7 @@ class Character(pg.sprite.Sprite):
                     self.rect.y += self.jump_height
                     self.jump_height += gravity
 
+    #movimento do personagem
     def _walk(self, width):
         d_pressed = pg.key.get_pressed()[pg.K_d]
         right_pressed = pg.key.get_pressed()[pg.K_RIGHT]
@@ -80,6 +84,7 @@ class Character(pg.sprite.Sprite):
             if self.rect.left > 0:
                 self.rect = self.rect.move(-self.speed, 0)
 
+    #animação do personagem
     def animation(self):
         if self.jump:
             if self.looking:
