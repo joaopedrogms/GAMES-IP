@@ -18,6 +18,7 @@ class Character(pg.sprite.Sprite):
         self.blue_keys_collected = 0
         self.cage_collected = False
         self.strawberries_collected = 0
+        self.rect.bottomleft = (0, 687)
 
     def update(self, width, height, grounds):
         top_value = self.rect[1]
