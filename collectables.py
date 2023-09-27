@@ -43,7 +43,7 @@ class Collectable(pg.sprite.Sprite):
         if not self.collected and self.object == 'cage':
             if character.yellow_keys_collected == quantity_yellow_keys and character.blue_keys_collected == quantity_blue_keys and self.rect.colliderect(character.rect):
                 self.collected = True
-                character.jaula_coletada = True
+                character.cage_collected = True
 
     def draw(self, screen):
         if not self.collected:

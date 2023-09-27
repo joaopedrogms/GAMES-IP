@@ -3,7 +3,6 @@ from pygame.locals import *
 from main import *
 
 class Character(pg.sprite.Sprite):
-
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
         self.image = load_image('sprite_llama.png')
@@ -12,12 +11,12 @@ class Character(pg.sprite.Sprite):
         self.looking = True
         self.jump = False
         self.hp = 3
-        self.vidas_adicionadas = 0
+        self.new_hp = 0
         self.attack = 1
         self.speed = 3
         self.yellow_keys_collected = 0
         self.blue_keys_collected = 0
-        self.jaula_coletada = False
+        self.cage_collected = False
         self.strawberries_collected = 0
 
     def update(self, width, height, grounds):
@@ -29,7 +28,7 @@ class Character(pg.sprite.Sprite):
 
         if self.strawberries_collected >= 10:
             self.hp += 1
-            self.vidas_adicionadas += 1
+            self.new_hp += 1
             self.strawberries_collected -= 10
 
         self._walk(width)
@@ -83,4 +82,3 @@ class Character(pg.sprite.Sprite):
                 self.image = pg.transform.flip(load_image('sprite_llama.png'), True, False)
             else:
                 self.image = load_image('sprite_llama.png')
-
