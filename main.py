@@ -70,8 +70,9 @@ def load_keys_and_cage():
 
 def load_platforms():
     ground_plataform = Platform(0, 687, 1080, 70)
+    plataform = Platform(600, 400, 100, 10)
 
-    return ground_plataform
+    return ground_plataform, plataform
 
 def main():
     global sprites_behind_player
@@ -115,8 +116,6 @@ def main():
                 going = False
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
-        elif going:
-            llama.update(screen.get_size()[0], screen.get_size()[1], platforms_group)
 
         colllectables_group.update(llama)
 
@@ -142,13 +141,12 @@ def main():
         if pg.key.get_pressed()[pg.K_f]:
             pg.display.toggle_fullscreen()
 
-        allsprites.draw(screen)
-
         pg.sprite.Group(hud).update()
         pg.sprite.Group(hud).draw(screen)
 
-        allsprites.update(screen.get_size()[0], screen.get_size()[1], platforms_group)
+        allsprites.draw(screen)
         platforms_group.draw(screen)
+        allsprites.update(screen.get_size()[0], platforms_group)
 
         pg.display.flip()
 
