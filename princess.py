@@ -1,5 +1,6 @@
 import pygame as pg
 
+#classe da princesa do jogo
 class Princess(pg.sprite.Sprite):
     def __init__(self, x, y):
         from main import load_image
@@ -14,6 +15,7 @@ class Princess(pg.sprite.Sprite):
         self.vertical_speed = 0
         self.on_ground = False
 
+    #atualização da gravidade, pulo e animação
     def update(self, plataforms_group):
         self._gravity(plataforms_group)
         self._jump()

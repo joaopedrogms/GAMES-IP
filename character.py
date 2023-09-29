@@ -107,7 +107,7 @@ class Character(pg.sprite.Sprite):
                     self.on_ground = True
                     self.jumping = False
                 #personagem subindo e checagem de colisao lateral
-                elif self.rect.top + - (platform.rect.bottom + self.vertical_speed) > 0:
+                elif self.rect.top - (platform.rect.bottom + self.vertical_speed) > 0:
                     self.rect.y = platform.rect.y + platform.rect.height
                     self.vertical_speed = 0
                 else:

@@ -59,10 +59,10 @@ def load_strawberries():
 
 def load_keys_and_cage():
     yellow_key_1 = Collectable(700, 620, 'yellow_key')
-    yellow_key_2 = Collectable(600, 500, 'yellow_key')
+    yellow_key_2 = Collectable(190, 350, 'yellow_key')
 
     blue_key_1 = Collectable(900, 620, 'blue_key')
-    blue_key_2 = Collectable(700, 500, 'blue_key')
+    blue_key_2 = Collectable(310, 210, 'blue_key')
 
     cage = Collectable(1000, 604, 'cage')
 
@@ -70,8 +70,8 @@ def load_keys_and_cage():
 
 def load_platforms():
     ground_plataform = Platform(0, 687, 1080)
-    plataform1 = Platform(600, 500, 100, True)
-    plataform2 = Platform(300, 420, 100, True)
+    plataform1 = Platform(600, 500, sprite=1)
+    plataform2 = Platform(150, 420, sprite=2)
 
     return ground_plataform, plataform1, plataform2
 
@@ -143,8 +143,7 @@ def main():
                 fullscreen_timer = pg.time.get_ticks()
 
         '''for platform in platforms_group:
-            pg.draw.rect(screen, (255, 0, 0), platform.rect)
-        pg.draw.rect(screen, (0, 255, 0), llama.rect)'''
+            pg.draw.rect(screen, (255, 0, 0), platform.rect)'''
 
         pg.display.flip()
 

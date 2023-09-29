@@ -1,9 +1,12 @@
 import pygame as pg
 
+#classe das plataformas com iniclização de sprite personalizado
 class Platform(pg.sprite.Sprite):
-    def __init__(self, x, y, width, sprite=False):
+    def __init__(self, x, y, width=0, sprite=0):
         pg.sprite.Sprite.__init__(self)
-        self.image = pg.Surface((width, 1), pg.SRCALPHA)
-        self.image.fill((0, 0, 0, 100))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
+        from main import load_image
+        if sprite == 0:
+            self.image = pg.Surface((width, 1), pg.SRCALPHA)
+        else:
+            self.image = load_image('sprite_platform_'+str(sprite)+'.png', scale=1.3)
+        self.rect = pg.Rect(x, y, self.image.get_width(), 1)
