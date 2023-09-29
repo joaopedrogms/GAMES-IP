@@ -26,20 +26,17 @@ class Collectable(pg.sprite.Sprite):
 
     def update(self, character):
         if not self.collected and self.rect.colliderect(character.rect):
-            if self.object == 'yellow_key':
-                character.yellow_keys_collected += 1
-            elif self.object == 'blue_key':
-                character.blue_keys_collected += 1
-            elif self.object == 'strawberry':
-                character.strawberries_collected += 1
-            elif self.object == 'cage':
+            if self.object == 'cage':
                 if character.yellow_keys_collected == quantity_yellow_keys and character.blue_keys_collected == quantity_blue_keys:
                     self.collected = True
                     character.cage_collected = True
+                    self.kill()
+            else:
+                if self.object == 'yellow_key':
+                    character.yellow_keys_collected += 1
+                elif self.object == 'blue_key':
+                    character.blue_keys_collected += 1
+                elif self.object == 'strawberry':
+                    character.strawberries_collected += 1
 
-            self.collected = True
-            self.kill()
-
-    def draw(self, screen):
-        if not self.collected:
-            screen.blit(self.image, self.rect)
+                self.kill()
