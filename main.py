@@ -166,8 +166,8 @@ def main():
                 pg.display.toggle_fullscreen()
                 fullscreen_timer = pg.time.get_ticks()
 
-        for platform in platforms_group:
-            pg.draw.rect(screen, (255, 0, 0), platform.rect)
+        '''for platform in platforms_group:
+            pg.draw.rect(screen, (255, 0, 0), platform.rect)'''
 
         pg.display.flip()
 
