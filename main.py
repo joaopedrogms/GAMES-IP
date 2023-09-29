@@ -75,78 +75,71 @@ def load_platforms():
     return ground_plataform, plataform
 
 def main():
-    global sprites_behind_player
-    sprites_behind_player = pg.sprite.Group()
-
+    #inicialização do jogo
     pg.init()
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
     pg.display.set_caption('Llama simulator')
     pg.display.set_icon(load_image('icon.png'))
 
-    # groups
-    colllectables_group = pg.sprite.Group()
+    # grupos de sprites
+    collectables_group = pg.sprite.Group()
     platforms_group = pg.sprite.Group()
+    sprites_behind_player = pg.sprite.Group()
 
+    # carragamento da iamgem de fundo, coeltáveis e plataformas
     background = load_image('background.png', scale=1)
     background = pg.transform.scale(background, (screen.get_size()[0], screen.get_size()[1]))
 
-    colllectables_group.add(load_keys_and_cage(), load_strawberries())
+    collectables_group.add(load_keys_and_cage(), load_strawberries())
     platforms_group.add(load_platforms())
 
-    screen.blit(background, (0, 0))
-    print(pg.display.get_surface().get_size())
-    pg.display.flip()
-
+    # Inicialização de variáveis
     princess = None
     wait_jump_count = 0
+    fullscreen_timer = 0
     llama = Character()
-
-    global allsprites
-    allsprites = pg.sprite.RenderPlain(llama)
-    clock = pg.time.Clock()
-
     hud = HUD(llama)
-
+    clock = pg.time.Clock()
+    
     going = True
     while going:
         clock.tick(60)
 
+        #saida do jogo
         for event in pg.event.get():
-            if event.type == pg.QUIT:
+            if event.type == pg.QUIT or pg.key.get_pressed()[pg.K_ESCAPE]:
                 going = False
-        if pg.key.get_pressed()[pg.K_ESCAPE]:
-            going = False
 
-        colllectables_group.update(llama)
+        #update elementos da tela
+        collectables_group.update(llama)
+        pg.sprite.Group(hud).update()
+        llama.update(screen.get_size()[0], platforms_group)
 
+        #desenho de lementos da tela
         screen.blit(background, (0, 0))
-
         sprites_behind_player.draw(screen)
+        collectables_group.draw(screen)
+        pg.sprite.Group(hud).draw(screen)
+        pg.sprite.RenderPlain(llama).draw(screen)
+        platforms_group.draw(screen)
 
+        # inicialização da princesa e fim da fase
         if llama.cage_collected:
-            llama.can_jump = False
-            if princess != None:
+            if princess is not None:
                 if wait_jump_count < 90:
                     wait_jump_count += 1
                 else:
                     llama.can_jump = True
-                    princess._jump(screen.get_size()[1], platforms_group)
+                    princess.update(platforms_group)
             else:
                 princess = Princess(965, 600)
                 sprites_behind_player.add(princess)
 
-        for collectable in colllectables_group:
-            collectable.draw(screen)
-
+        # tela cheia com um contador
         if pg.key.get_pressed()[pg.K_f]:
-            pg.display.toggle_fullscreen()
-
-        pg.sprite.Group(hud).update()
-        pg.sprite.Group(hud).draw(screen)
-
-        allsprites.draw(screen)
-        platforms_group.draw(screen)
-        allsprites.update(screen.get_size()[0], platforms_group)
+            if pg.time.get_ticks() - fullscreen_timer > 300:
+                pg.display.toggle_fullscreen()
+                fullscreen_timer = pg.time.get_ticks()
 
         pg.display.flip()
 

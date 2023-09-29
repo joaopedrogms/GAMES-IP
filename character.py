@@ -7,8 +7,8 @@ class Character(pg.sprite.Sprite):
     def __init__(self):
         pg.sprite.Sprite.__init__(self)
 
-        self.image = load_image('sprite_llama.png')
-        self.rect = load_image('sprite_llama.png').get_rect()
+        self.image = load_image('main_character_idle.png')
+        self.rect = load_image('main_character_idle.png').get_rect()
 
         self.hp = 3
         self.new_hp = 0
@@ -18,11 +18,12 @@ class Character(pg.sprite.Sprite):
         self.yellow_keys_collected = 0
         self.blue_keys_collected = 0
         self.cage_collected = False
+        self.can_jump = False
         self.strawberries_collected = 0
 
         self.rect.bottomleft = (0, 300)
 
-        self.looking = True
+        self.looking_right = True
         self.jumping = False
 
         self.jumping_height = -19.4
@@ -31,34 +32,30 @@ class Character(pg.sprite.Sprite):
         self.on_ground = False
 
     def update(self, width, platforms_group):
-        self._gravity()
-        self._jumping()
-
-        previous_y = self.rect.y
-        self.rect = self.rect.move(0, self.vertical_speed)
-        self.on_ground = bool(pg.sprite.spritecollide(self, platforms_group, False))
-
-        if self.on_ground:
-            self.rect.y = previous_y
-            self.vertical_speed = 0
-            self.jumping = False
-
-        self.animation()
+        self._gravity(platforms_group)
+        self._jump()
         self._walk(width)
+        self._animation()
 
         if self.strawberries_collected >= 10:
             self.hp += 1
             self.new_hp += 1
             self.strawberries_collected -= 10
 
-    #pulo do personagem
-    def _jumping(self):
+    #jump do personagem
+    def _jump(self):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
         w_pressed = pg.key.get_pressed()[pg.K_w]
+        space_pressed = pg.key.get_pressed()[pg.K_SPACE]
 
-        if (up_pressed or w_pressed) and self.on_ground and not self.jumping:
-            self.vertical_speed = self.jumping_height
-            self.jumping = True
+        if not self.cage_collected:
+            if (up_pressed or w_pressed or space_pressed) and self.on_ground and not self.jumping:
+                self.vertical_speed = self.jumping_height
+                self.jumping = True
+        else:
+            if self.can_jump and self.on_ground and not self.jumping:
+                self.vertical_speed = self.jumping_height
+                self.jumping = True
 
     #movimento do personagem
     def _walk(self, width):
@@ -67,31 +64,38 @@ class Character(pg.sprite.Sprite):
         left_pressed = pg.key.get_pressed()[pg.K_LEFT]
         a_pressed = pg.key.get_pressed()[pg.K_a]
 
-        if d_pressed or right_pressed:
-            self.looking = True
-            if self.rect.right < width:
-                self.rect = self.rect.move(self.speed, 0)
-        elif left_pressed or a_pressed:
-            self.looking = False
-            if self.rect.left > 0:
-                self.rect = self.rect.move(-self.speed, 0)
+        if not self.cage_collected:
+            if d_pressed or right_pressed:
+                self.looking_right = True
+                if self.rect.right < width:
+                    self.rect = self.rect.move(self.speed, 0)
+            elif left_pressed or a_pressed:
+                self.looking_right = False
+                if self.rect.left > 0:
+                    self.rect = self.rect.move(-self.speed, 0)
 
     #animação do personagem
-    def animation(self):
+    def _animation(self):
         if self.jumping:
-            if self.looking:
-                self.image = pg.transform.flip(load_image('sprite_llama_pulo.png'), True, False)
+            if self.looking_right:
+                self.image = pg.transform.flip(load_image('main_character_jump.png'), True, False)
             else:
-                self.image = load_image('sprite_llama_pulo.png')
+                self.image = load_image('main_character_jump.png')
         else:
-            if self.looking:
-                self.image = pg.transform.flip(load_image('sprite_llama.png'), True, False)
+            if self.looking_right:
+                self.image = pg.transform.flip(load_image('main_character_idle.png'), True, False)
             else:
-                self.image = load_image('sprite_llama.png')
+                self.image = load_image('main_character_idle.png')
 
-    def _gravity(self):
-        if not self.on_ground:
-            self.vertical_speed += self.gravity
-        else:
+    #checgaem de gravidadedo pulo
+    def _gravity(self, platforms_group):
+        previous_y = self.rect.y
+        self.rect = self.rect.move(0, self.vertical_speed)
+        self.on_ground = bool(pg.sprite.spritecollide(self, platforms_group, False))
+
+        if self.on_ground:
+            self.rect.y = previous_y
             self.vertical_speed = 0
             self.jumping = False
+        else:
+            self.vertical_speed += self.gravity

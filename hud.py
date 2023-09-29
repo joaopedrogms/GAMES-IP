@@ -1,18 +1,20 @@
 import pygame as pg
-import os
 
 class HUD(pg.sprite.Sprite):
     def __init__(self, character):
         from main import load_image
         pg.sprite.Sprite.__init__(self)
         self.character = character
-        self.heart_image = load_image('coracao.png', scale=0.06)
+        self.heart_image = load_image('heart.png', scale=0.06)
         self.yellow_key_image = load_image('yellow_key.png', scale=0.065)
         self.blue_key_image = load_image('blue_key.png', scale=0.065)
         self.strawberry_image = load_image('strawberry.png', scale=0.16)
         self.rect = self.heart_image.get_rect()
         self.rect.topleft = (10, 10)
-        self.key_font = pg.font.Font(os.path.join('media', 'font', 'daydream.ttf'), 15)
+        try:
+            self.key_font = pg.font.Font('media/font/daydream.ttf', 15)
+        except:
+            self.key_font = pg.font.Font(None, 30)
 
     def update(self):
         self.image = pg.Surface((1900, 1900), pg.SRCALPHA)
