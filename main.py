@@ -29,40 +29,40 @@ def load_image(name, colorkey=None, scale=0.3):
     return image
 
 def load_strawberries():
-    strawberry1 = Collectable(400, 620, 'strawberry')
-    strawberry2 = Collectable(400, 560, 'strawberry')
-    strawberry3 = Collectable(450, 560, 'strawberry')
-    strawberry4 = Collectable(450, 620, 'strawberry')
-    strawberry5 = Collectable(500, 620, 'strawberry')
-    strawberry6 = Collectable(500, 560, 'strawberry')
-    strawberry7 = Collectable(150, 560, 'strawberry')
-    strawberry8 = Collectable(150, 620, 'strawberry')
+    strawberry1 = Collectable(250, 350, 'strawberry')
+    strawberry2 = Collectable(300, 350, 'strawberry')
+    strawberry3 = Collectable(350, 350, 'strawberry')
+    strawberry4 = Collectable(400, 350, 'strawberry')
+    strawberry5 = Collectable(250, 300, 'strawberry')
+    strawberry6 = Collectable(300, 300, 'strawberry')
+    strawberry7 = Collectable(350, 300, 'strawberry')
+    strawberry8 = Collectable(400, 300, 'strawberry')
 
-    strawberry9 = Collectable(200, 560, 'strawberry')
-    strawberry10 = Collectable(200, 620, 'strawberry')
-    strawberry11 = Collectable(250, 560, 'strawberry')
-    strawberry12 = Collectable(250, 620, 'strawberry')
-    strawberry13 = Collectable(300, 560, 'strawberry')
-    strawberry14 = Collectable(300, 620, 'strawberry')
-    strawberry15 = Collectable(350, 560, 'strawberry')
-    strawberry16 = Collectable(350, 620, 'strawberry')
+    strawberry9 = Collectable(650, 450, 'strawberry')
+    strawberry10 = Collectable(700, 450, 'strawberry')
+    strawberry11 = Collectable(750, 450, 'strawberry')
+    strawberry12 = Collectable(800, 450, 'strawberry')
+    strawberry13 = Collectable(650, 400, 'strawberry')
+    strawberry14 = Collectable(700, 400, 'strawberry')
+    strawberry15 = Collectable(750, 400, 'strawberry')
+    strawberry16 = Collectable(800, 400, 'strawberry')
 
-    strawberry17 = Collectable(200, 500, 'strawberry')
-    strawberry18 = Collectable(250, 500, 'strawberry')
-    strawberry19 = Collectable(300, 500, 'strawberry')
-    strawberry20 = Collectable(350, 500, 'strawberry')
-    strawberry21 = Collectable(400, 500, 'strawberry')
-    strawberry22 = Collectable(450, 500, 'strawberry')
-    strawberry23 = Collectable(500, 500, 'strawberry')
-    strawberry24 = Collectable(150, 500, 'strawberry')
+    strawberry17 = Collectable(200, 550, 'strawberry')
+    strawberry18 = Collectable(250, 550, 'strawberry')
+    strawberry19 = Collectable(300, 550, 'strawberry')
+    strawberry20 = Collectable(350, 550, 'strawberry')
+    strawberry21 = Collectable(200, 500, 'strawberry')
+    strawberry22 = Collectable(250, 500, 'strawberry')
+    strawberry23 = Collectable(300, 500, 'strawberry')
+    strawberry24 = Collectable(350, 500, 'strawberry')
 
     return strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberry7, strawberry8, strawberry9, strawberry10, strawberry11, strawberry12, strawberry13, strawberry14, strawberry15, strawberry16, strawberry17, strawberry18, strawberry19, strawberry20, strawberry21, strawberry22, strawberry23, strawberry24
 
 def load_keys_and_cage():
-    yellow_key_1 = Collectable(700, 620, 'yellow_key')
+    yellow_key_1 = Collectable(670, 150, 'yellow_key')
     yellow_key_2 = Collectable(190, 350, 'yellow_key')
 
-    blue_key_1 = Collectable(900, 620, 'blue_key')
+    blue_key_1 = Collectable(900, 600, 'blue_key')
     blue_key_2 = Collectable(310, 210, 'blue_key')
 
     cage = Collectable(1000, 604, 'cage')
@@ -70,16 +70,21 @@ def load_keys_and_cage():
     return yellow_key_1, yellow_key_2, blue_key_1, blue_key_2, cage
 
 def load_platforms():
-    ground_plataform = Platform(0, 687, 1080, 90)
-    plataform1 = Platform(600, 500, sprite=1)
-    plataform2 = Platform(150, 420, sprite=2)
+    #obs: o 10 é a largura da cauda do sprite, o que faz o personagem voar se nao for retirada da colisao
+    ground_platform_1 = Platform(0, 687, 590 - 10, 90)
+    ground_platform_2 = Platform(780 + 10, 687, 590, 90)
 
-    return ground_plataform, plataform1, plataform2
+    platform_1 = Platform(600, 500, sprite=1)
+    platform_2 = Platform(150, 420, sprite=2)
+    platform_3 = Platform(550, 230, sprite=1)
+
+    return ground_platform_1, ground_platform_2, platform_1, platform_2, platform_3
 
 def load_holes():
     hole1 = Hole(590, 630, 190, 140)
 
     return hole1
+
 def main():
     #inicialização do jogo
     pg.init()
@@ -141,6 +146,7 @@ def main():
             else:
                 princess = Princess(965, 600)
                 sprites_behind_player.add(princess)
+                llama.looking_right = True
 
         # tela cheia com um contador
         if pg.key.get_pressed()[pg.K_f]:
