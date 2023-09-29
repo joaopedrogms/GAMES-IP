@@ -60,10 +60,10 @@ def load_strawberries():
     strawberry27 = Collectable(300, 530, 'strawberry')
     strawberry28 = Collectable(350, 530, 'strawberry')
 
-    strawberry29 = Collectable(750, 180, 'strawberry')
-    strawberry30 = Collectable(800, 180, 'strawberry')
-    strawberry31 = Collectable(750, 130, 'strawberry')
-    strawberry32 = Collectable(800, 130, 'strawberry')
+    strawberry29 = Collectable(550, 180, 'strawberry')
+    strawberry30 = Collectable(600, 180, 'strawberry')
+    strawberry31 = Collectable(550, 130, 'strawberry')
+    strawberry32 = Collectable(600, 130, 'strawberry')
 
     return strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberry7, strawberry8,\
         strawberry9, strawberry10, strawberry11, strawberry12, strawberry13, strawberry14, strawberry15, strawberry16,\
@@ -74,7 +74,7 @@ def load_keys_and_cage():
     yellow_key_1 = Collectable(900, 600, 'yellow_key')
     yellow_key_2 = Collectable(310, 210, 'yellow_key')
 
-    blue_key_1 = Collectable(640, 150, 'blue_key')
+    blue_key_1 = Collectable(450, 150, 'blue_key')
     blue_key_2 = Collectable(190, 350, 'blue_key')
 
     cage = Collectable(1000, 604, 'cage')
@@ -88,7 +88,7 @@ def load_platforms():
 
     platform_1 = Platform(600, 500, sprite=1)
     platform_2 = Platform(150, 420, sprite=2)
-    platform_3 = Platform(550, 230, sprite=3)
+    platform_3 = Platform(400, 230, sprite=3)
 
     return ground_platform_1, ground_platform_2, platform_1, platform_2, platform_3
 
@@ -166,8 +166,8 @@ def main():
                 pg.display.toggle_fullscreen()
                 fullscreen_timer = pg.time.get_ticks()
 
-        '''for platform in platforms_group:
-            pg.draw.rect(screen, (255, 0, 0), platform.rect)'''
+        for platform in platforms_group:
+            pg.draw.rect(screen, (255, 0, 0), platform.rect)
 
         pg.display.flip()
 
