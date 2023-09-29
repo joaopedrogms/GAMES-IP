@@ -6,6 +6,7 @@ from character import *
 from princess import *
 from collectables import *
 from platforms import *
+from holes import *
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, 'media')
@@ -69,12 +70,16 @@ def load_keys_and_cage():
     return yellow_key_1, yellow_key_2, blue_key_1, blue_key_2, cage
 
 def load_platforms():
-    ground_plataform = Platform(0, 687, 1080)
+    ground_plataform = Platform(0, 687, 1080, 90)
     plataform1 = Platform(600, 500, sprite=1)
     plataform2 = Platform(150, 420, sprite=2)
 
     return ground_plataform, plataform1, plataform2
 
+def load_holes():
+    hole1 = Hole(590, 630, 190, 140)
+
+    return hole1
 def main():
     #inicialização do jogo
     pg.init()
@@ -93,6 +98,7 @@ def main():
 
     collectables_group.add(load_keys_and_cage(), load_strawberries())
     platforms_group.add(load_platforms())
+    sprites_behind_player.add(load_holes())
 
     # Inicialização de variáveis
     princess = None
@@ -101,7 +107,7 @@ def main():
     llama = Character()
     hud = HUD(llama)
     clock = pg.time.Clock()
-    
+
     going = True
     while going:
         clock.tick(60)
