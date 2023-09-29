@@ -28,7 +28,7 @@ class HUD(pg.sprite.Sprite):
         # strawberries
         strawberry_rect = self.strawberry_image.get_rect()
         strawberry_rect.topleft = (self.image.get_width() - 920, 10)
-        self.image.blit(self.strawberry_image, (self.image.get_width() - 920, 10))
+        self.image.blit(self.strawberry_image, strawberry_rect)
         strawberry_count = self.key_font.render(str(self.character.strawberries_collected + (self.character.new_hp * 10)), True, (255, 0, 0))
         self.image.blit(strawberry_count, (strawberry_rect.right + 10, strawberry_rect.centery))
 
