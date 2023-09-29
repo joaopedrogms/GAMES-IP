@@ -47,16 +47,20 @@ def load_strawberries():
     strawberry15 = Collectable(750, 400, 'strawberry')
     strawberry16 = Collectable(800, 400, 'strawberry')
 
-    strawberry17 = Collectable(200, 550, 'strawberry')
-    strawberry18 = Collectable(250, 550, 'strawberry')
-    strawberry19 = Collectable(300, 550, 'strawberry')
-    strawberry20 = Collectable(350, 550, 'strawberry')
-    strawberry21 = Collectable(200, 500, 'strawberry')
-    strawberry22 = Collectable(250, 500, 'strawberry')
-    strawberry23 = Collectable(300, 500, 'strawberry')
-    strawberry24 = Collectable(350, 500, 'strawberry')
+    strawberry17 = Collectable(200, 600, 'strawberry')
+    strawberry18 = Collectable(250, 600, 'strawberry')
+    strawberry19 = Collectable(300, 600, 'strawberry')
+    strawberry20 = Collectable(350, 600, 'strawberry')
+    strawberry21 = Collectable(200, 550, 'strawberry')
+    strawberry22 = Collectable(250, 550, 'strawberry')
+    strawberry23 = Collectable(300, 550, 'strawberry')
+    strawberry24 = Collectable(350, 550, 'strawberry')
+    strawberry25 = Collectable(200, 500, 'strawberry')
+    strawberry26 = Collectable(250, 500, 'strawberry')
+    strawberry27 = Collectable(300, 500, 'strawberry')
+    strawberry28 = Collectable(350, 500, 'strawberry')
 
-    return strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberry7, strawberry8, strawberry9, strawberry10, strawberry11, strawberry12, strawberry13, strawberry14, strawberry15, strawberry16, strawberry17, strawberry18, strawberry19, strawberry20, strawberry21, strawberry22, strawberry23, strawberry24
+    return strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberry7, strawberry8, strawberry9, strawberry10, strawberry11, strawberry12, strawberry13, strawberry14, strawberry15, strawberry16, strawberry17, strawberry18, strawberry19, strawberry20, strawberry21, strawberry22, strawberry23, strawberry24, strawberry25, strawberry26, strawberry27, strawberry28
 
 def load_keys_and_cage():
     yellow_key_1 = Collectable(670, 150, 'yellow_key')
