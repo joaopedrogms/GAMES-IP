@@ -95,20 +95,19 @@ class Character(pg.sprite.Sprite):
 
     #checgaem de gravidade do pulo e se a plataforma esta em cima ou embaixo do personagem
     def _gravity(self, platforms_group):
-        old_x = self.rect.x
         self.rect = self.rect.move(0, self.vertical_speed)
         self.on_ground = False
 
         for platform in platforms_group:
             if self.rect.colliderect(platform.rect):
                 # personagem caindo e checagem de colisao lateral
-                if self.vertical_speed >= 0 and self.rect.bottom <= platform.rect.top + self.vertical_speed:
+                if self.rect.bottom <= platform.rect.top + self.vertical_speed:
                     self.rect.y = platform.rect.y - self.rect.height
                     self.vertical_speed = 0
                     self.on_ground = True
                     self.jumping = False
                 #personagem subindo e checagem de colisao lateral
-                elif self.vertical_speed < 0 and self.rect.top >= platform.rect.bottom + self.vertical_speed:
+                elif self.rect.top >= platform.rect.bottom + self.vertical_speed:
                     self.rect.y = platform.rect.y + platform.rect.height
                     self.vertical_speed = 0
                 else:
