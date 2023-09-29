@@ -69,10 +69,11 @@ def load_keys_and_cage():
     return yellow_key_1, yellow_key_2, blue_key_1, blue_key_2, cage
 
 def load_platforms():
-    ground_plataform = Platform(0, 687, 1080, 70)
-    plataform = Platform(600, 400, 100, 10)
+    ground_plataform = Platform(0, 687, 1080)
+    plataform1 = Platform(600, 500, 100, True)
+    plataform2 = Platform(300, 420, 100, True)
 
-    return ground_plataform, plataform
+    return ground_plataform, plataform1, plataform2
 
 def main():
     #inicialização do jogo
@@ -140,6 +141,10 @@ def main():
             if pg.time.get_ticks() - fullscreen_timer > 300:
                 pg.display.toggle_fullscreen()
                 fullscreen_timer = pg.time.get_ticks()
+
+        '''for platform in platforms_group:
+            pg.draw.rect(screen, (255, 0, 0), platform.rect)
+        pg.draw.rect(screen, (0, 255, 0), llama.rect)'''
 
         pg.display.flip()
 
