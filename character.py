@@ -46,9 +46,10 @@ class Character(pg.sprite.Sprite):
     def _jump(self):
         up_pressed = pg.key.get_pressed()[pg.K_UP]
         w_pressed = pg.key.get_pressed()[pg.K_w]
+        space_pressed = pg.key.get_pressed()[pg.K_SPACE]
 
         if not self.cage_collected:
-            if (up_pressed or w_pressed) and self.on_ground and not self.jumping:
+            if (up_pressed or w_pressed or space_pressed) and self.on_ground and not self.jumping:
                 self.vertical_speed = self.jumping_height
                 self.jumping = True
         else:
