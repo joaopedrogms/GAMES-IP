@@ -9,13 +9,13 @@ class Collectable(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
         self.object = object
         if self.object == 'strawberry':
-            self.image = load_image('strawberry.png', scale=0.16)
+            self.image = load_image('strawberry.png', scale=0.149)
         elif self.object == 'yellow_key':
-            self.image = load_image('yellow_key.png', scale=0.065)
+            self.image = load_image('yellow_key.png', scale=0.05)
             global quantity_yellow_keys
             quantity_yellow_keys += 1
         elif self.object == 'blue_key':
-            self.image = load_image('blue_key.png', scale=0.065)
+            self.image = load_image('blue_key.png', scale=0.05)
             global quantity_blue_keys
             quantity_blue_keys += 1
         elif self.object == 'cage':
