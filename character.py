@@ -1,3 +1,4 @@
+import sys
 import pygame as pg
 from pygame.locals import *
 from main import *
@@ -21,7 +22,7 @@ class Character(pg.sprite.Sprite):
         self.can_jump = False
         self.strawberries_collected = 0
 
-        self.rect.bottomleft = (0, 300)
+        self.rect.bottomleft = (0, 687)
 
         self.looking_right = True
         self.jumping = False
@@ -37,11 +38,8 @@ class Character(pg.sprite.Sprite):
         self._jump()
         self._walk(width)
         self._animation()
-
-        if self.strawberries_collected >= 10:
-            self.hp += 1
-            self.new_hp += 1
-            self.strawberries_collected -= 10
+        self._death()
+        self._strawberry()
 
     #jump do personagem
     def _jump(self):
@@ -119,3 +117,23 @@ class Character(pg.sprite.Sprite):
 
         if not self.on_ground:
             self.vertical_speed += self.gravity
+
+    def _strawberry(self):
+        if self.strawberries_collected >= 10:
+            self.hp += 1
+            self.new_hp += 1
+            self.strawberries_collected -= 10
+
+    def _death(self):
+        if self.rect.y > 900:
+            if self.hp > 1:
+                self.hp -= 1
+                self.rect.bottomleft = (0, 687)
+                self.looking_right = True
+                self.vertical_speed = 0
+                self.on_ground = False
+                self.jumping = False
+                self.can_jump = False
+            else:
+                self.hp = 0
+                sys.exit()

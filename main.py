@@ -29,14 +29,14 @@ def load_image(name, colorkey=None, scale=0.3):
     return image
 
 def load_strawberries():
-    strawberry1 = Collectable(250, 350, 'strawberry')
-    strawberry2 = Collectable(300, 350, 'strawberry')
-    strawberry3 = Collectable(350, 350, 'strawberry')
-    strawberry4 = Collectable(400, 350, 'strawberry')
-    strawberry5 = Collectable(250, 300, 'strawberry')
-    strawberry6 = Collectable(300, 300, 'strawberry')
-    strawberry7 = Collectable(350, 300, 'strawberry')
-    strawberry8 = Collectable(400, 300, 'strawberry')
+    strawberry1 = Collectable(250, 370, 'strawberry')
+    strawberry2 = Collectable(300, 370, 'strawberry')
+    strawberry3 = Collectable(350, 370, 'strawberry')
+    strawberry4 = Collectable(400, 370, 'strawberry')
+    strawberry5 = Collectable(250, 320, 'strawberry')
+    strawberry6 = Collectable(300, 320, 'strawberry')
+    strawberry7 = Collectable(350, 320, 'strawberry')
+    strawberry8 = Collectable(400, 320, 'strawberry')
 
     strawberry9 = Collectable(650, 450, 'strawberry')
     strawberry10 = Collectable(700, 450, 'strawberry')
@@ -47,27 +47,35 @@ def load_strawberries():
     strawberry15 = Collectable(750, 400, 'strawberry')
     strawberry16 = Collectable(800, 400, 'strawberry')
 
-    strawberry17 = Collectable(200, 600, 'strawberry')
-    strawberry18 = Collectable(250, 600, 'strawberry')
-    strawberry19 = Collectable(300, 600, 'strawberry')
-    strawberry20 = Collectable(350, 600, 'strawberry')
-    strawberry21 = Collectable(200, 550, 'strawberry')
-    strawberry22 = Collectable(250, 550, 'strawberry')
-    strawberry23 = Collectable(300, 550, 'strawberry')
-    strawberry24 = Collectable(350, 550, 'strawberry')
-    strawberry25 = Collectable(200, 500, 'strawberry')
-    strawberry26 = Collectable(250, 500, 'strawberry')
-    strawberry27 = Collectable(300, 500, 'strawberry')
-    strawberry28 = Collectable(350, 500, 'strawberry')
+    strawberry17 = Collectable(200, 630, 'strawberry')
+    strawberry18 = Collectable(250, 630, 'strawberry')
+    strawberry19 = Collectable(300, 630, 'strawberry')
+    strawberry20 = Collectable(350, 630, 'strawberry')
+    strawberry21 = Collectable(200, 580, 'strawberry')
+    strawberry22 = Collectable(250, 580, 'strawberry')
+    strawberry23 = Collectable(300, 580, 'strawberry')
+    strawberry24 = Collectable(350, 580, 'strawberry')
+    strawberry25 = Collectable(200, 530, 'strawberry')
+    strawberry26 = Collectable(250, 530, 'strawberry')
+    strawberry27 = Collectable(300, 530, 'strawberry')
+    strawberry28 = Collectable(350, 530, 'strawberry')
 
-    return strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberry7, strawberry8, strawberry9, strawberry10, strawberry11, strawberry12, strawberry13, strawberry14, strawberry15, strawberry16, strawberry17, strawberry18, strawberry19, strawberry20, strawberry21, strawberry22, strawberry23, strawberry24, strawberry25, strawberry26, strawberry27, strawberry28
+    strawberry29 = Collectable(550, 180, 'strawberry')
+    strawberry30 = Collectable(600, 180, 'strawberry')
+    strawberry31 = Collectable(550, 130, 'strawberry')
+    strawberry32 = Collectable(600, 130, 'strawberry')
+
+    return strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberry7, strawberry8,\
+        strawberry9, strawberry10, strawberry11, strawberry12, strawberry13, strawberry14, strawberry15, strawberry16,\
+        strawberry17, strawberry18, strawberry19, strawberry20, strawberry21, strawberry22, strawberry23, strawberry24,\
+        strawberry25, strawberry26, strawberry27, strawberry28, strawberry29, strawberry30, strawberry31, strawberry32
 
 def load_keys_and_cage():
-    yellow_key_1 = Collectable(670, 150, 'yellow_key')
-    yellow_key_2 = Collectable(190, 350, 'yellow_key')
+    yellow_key_1 = Collectable(900, 600, 'yellow_key')
+    yellow_key_2 = Collectable(310, 210, 'yellow_key')
 
-    blue_key_1 = Collectable(900, 600, 'blue_key')
-    blue_key_2 = Collectable(310, 210, 'blue_key')
+    blue_key_1 = Collectable(450, 150, 'blue_key')
+    blue_key_2 = Collectable(190, 350, 'blue_key')
 
     cage = Collectable(1000, 604, 'cage')
 
@@ -80,7 +88,7 @@ def load_platforms():
 
     platform_1 = Platform(600, 500, sprite=1)
     platform_2 = Platform(150, 420, sprite=2)
-    platform_3 = Platform(550, 230, sprite=1)
+    platform_3 = Platform(400, 230, sprite=3)
 
     return ground_platform_1, ground_platform_2, platform_1, platform_2, platform_3
 
