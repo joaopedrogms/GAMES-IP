@@ -12,7 +12,10 @@ class HUD(pg.sprite.Sprite):
         self.strawberry_image = load_image('strawberry.png', scale=0.16)
         self.rect = self.heart_image.get_rect()
         self.rect.topleft = (10, 10)
-        self.key_font = pg.font.Font('daydream.ttf', 15)
+        try:
+            self.key_font = pg.font.Font('media/font/daydream.ttf', 15)
+        except:
+            self.key_font = pg.font.Font(None, 30)
 
     def update(self):
         self.image = pg.Surface((1900, 1900), pg.SRCALPHA)
