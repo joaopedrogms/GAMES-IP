@@ -95,15 +95,17 @@ class Character(pg.sprite.Sprite):
         for platform in platforms_group:
             if self.rect.colliderect(platform.rect):
                 # personagem caindo e checagem de colisao lateral
-                if self.vertical_speed >= 0 and abs(self.rect.bottom - platform.rect.top) <= self.vertical_speed:
+                if self.vertical_speed >= 0 and self.rect.bottom <= platform.rect.top + self.vertical_speed:
                     self.rect.y = platform.rect.y - self.rect.height
                     self.vertical_speed = 0
                     self.on_ground = True
                     self.jumping = False
                 #personagem subindo e checagem de colisao lateral
-                elif self.vertical_speed < 0 and abs(self.rect.top - platform.rect.bottom) <= -self.vertical_speed:
+                elif self.vertical_speed < 0 and self.rect.top >= platform.rect.bottom + self.vertical_speed:
                     self.rect.y = platform.rect.y + platform.rect.height
                     self.vertical_speed = 0
+                else:
+                    print(self.rect.top)
 
         if not self.on_ground:
             self.vertical_speed += self.gravity
