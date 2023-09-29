@@ -8,7 +8,7 @@ class HUD(pg.sprite.Sprite):
         self.heart_image = load_image('heart.png', scale=0.05)
         self.yellow_key_image = load_image('yellow_key.png', scale=0.05)
         self.blue_key_image = load_image('blue_key.png', scale=0.05)
-        self.strawberry_image = load_image('strawberry.png', scale=0.14)
+        self.strawberry_image = load_image('strawberry.png', scale=0.149)
         self.rect = self.heart_image.get_rect()
         self.rect.topleft = (10, 10)
         try:
@@ -30,11 +30,11 @@ class HUD(pg.sprite.Sprite):
         strawberry_rect.topleft = (self.image.get_width() - 920, 10)
         self.image.blit(self.strawberry_image, strawberry_rect)
         strawberry_count = self.key_font.render(str(self.character.strawberries_collected + (self.character.new_hp * 10)), True, (255, 0, 0))
-        self.image.blit(strawberry_count, (strawberry_rect.right + 10, strawberry_rect.centery))
+        self.image.blit(strawberry_count, (strawberry_rect.right + 10, (strawberry_rect.centery - strawberry_count.get_height() // 2) + 5))
 
         # yellow keys
         yellow_key_rect = self.yellow_key_image.get_rect()
-        yellow_key_rect.topleft = (self.image.get_width() - 930, 60)
+        yellow_key_rect.topleft = (self.image.get_width() - 930, 56)
         self.image.blit(self.yellow_key_image, yellow_key_rect)
         yellow_key_count = self.key_font.render(str(self.character.yellow_keys_collected), True, (255, 255, 160))
         self.image.blit(yellow_key_count, (
@@ -42,7 +42,7 @@ class HUD(pg.sprite.Sprite):
 
         # blue keys
         blue_key_rect = self.blue_key_image.get_rect()
-        blue_key_rect.topleft = (self.image.get_width() - 930, 105)
+        blue_key_rect.topleft = (self.image.get_width() - 930, 100)
         self.image.blit(self.blue_key_image, blue_key_rect)
         blue_key_count = self.key_font.render(str(self.character.blue_keys_collected), True, (195, 195, 195))
         self.image.blit(blue_key_count,
