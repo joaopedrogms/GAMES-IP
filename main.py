@@ -10,8 +10,6 @@ from platforms import *
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, 'media')
 
-blue_keys = 10
-
 def load_image(name, colorkey=None, scale=0.3):
     fullpath = os.path.join(data_dir, 'img')
     fullname = os.path.join(fullpath, name)
@@ -72,8 +70,9 @@ def load_keys_and_cage():
 
 def load_platforms():
     ground_plataform = Platform(0, 687, 1080, 70)
+    plataform = Platform(600, 400, 100, 10)
 
-    return ground_plataform
+    return ground_plataform, plataform
 
 def main():
     global sprites_behind_player
@@ -108,17 +107,18 @@ def main():
 
     hud = HUD(llama)
 
+    fullscreen_timer = 0
+
     going = True
     while going:
         clock.tick(60)
 
+        #checagem de fechamento do jogo
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 going = False
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
-        elif going:
-            llama.update(screen.get_size()[0], screen.get_size()[1], platforms_group)
 
         colllectables_group.update(llama)
 
@@ -126,26 +126,33 @@ def main():
 
         sprites_behind_player.draw(screen)
 
+        #spawn da princesa lhama e final da fase
         if llama.cage_collected:
             if princess != None:
                 if wait_jump_count < 90:
                     wait_jump_count += 1
                 else:
-                    princess._jump(screen.get_size()[1], platforms_group)
+                    llama.can_jump = True
+                    princess.update(platforms_group)
             else:
                 princess = Princess(965, 600)
                 sprites_behind_player.add(princess)
 
         for collectable in colllectables_group:
             collectable.draw(screen)
-        
-        allsprites.draw(screen)
+
+        #mudar o jogo para tela cheia, com um contador
+        if pg.key.get_pressed()[pg.K_f]:
+            if pg.time.get_ticks() - fullscreen_timer > 300:
+                pg.display.toggle_fullscreen()
+                fullscreen_timer = pg.time.get_ticks()
 
         pg.sprite.Group(hud).update()
         pg.sprite.Group(hud).draw(screen)
 
-        allsprites.update(screen.get_size()[0], screen.get_size()[1], platforms_group)
+        allsprites.draw(screen)
         platforms_group.draw(screen)
+        allsprites.update(screen.get_size()[0], platforms_group)
 
         pg.display.flip()
 
