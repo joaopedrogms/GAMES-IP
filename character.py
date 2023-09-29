@@ -29,6 +29,7 @@ class Character(pg.sprite.Sprite):
         self.jumping_height = -19.4
         self.gravity = 1
         self.vertical_speed = 0
+        self.horizontal_speed = 0
         self.on_ground = False
 
     def update(self, width, platforms_group):
@@ -67,12 +68,17 @@ class Character(pg.sprite.Sprite):
         if not self.cage_collected:
             if d_pressed or right_pressed:
                 self.looking_right = True
+                self.horizontal_speed = self.speed
+
                 if self.rect.right < width:
-                    self.rect = self.rect.move(self.speed, 0)
+                    self.rect = self.rect.move(self.horizontal_speed, 0)
+
             elif left_pressed or a_pressed:
                 self.looking_right = False
+                self.horizontal_speed = -self.speed
+
                 if self.rect.left > 0:
-                    self.rect = self.rect.move(-self.speed, 0)
+                    self.rect = self.rect.move(self.horizontal_speed, 0)
 
     #animação do personagem
     def _animation(self):
@@ -89,6 +95,7 @@ class Character(pg.sprite.Sprite):
 
     #checgaem de gravidade do pulo e se a plataforma esta em cima ou embaixo do personagem
     def _gravity(self, platforms_group):
+        old_x = self.rect.x
         self.rect = self.rect.move(0, self.vertical_speed)
         self.on_ground = False
 
@@ -105,7 +112,11 @@ class Character(pg.sprite.Sprite):
                     self.rect.y = platform.rect.y + platform.rect.height
                     self.vertical_speed = 0
                 else:
-                    print(self.rect.top)
+                    #checagem colisao plataformas
+                    if self.horizontal_speed > 0:
+                        self.rect.right = platform.rect.left
+                    elif self.horizontal_speed < 0:
+                        self.rect.left = platform.rect.right
 
         if not self.on_ground:
             self.vertical_speed += self.gravity
