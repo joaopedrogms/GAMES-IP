@@ -21,6 +21,8 @@ class Character(pg.sprite.Sprite):
         self.cage_collected = False
         self.strawberries_collected = 0
         self.rect.bottomleft = (0, 687)
+        self.cameraX = 0
+        self.cameraY = 0
 
     def update(self, width, height, grounds):
         top_value = self.rect[1]
@@ -40,7 +42,7 @@ class Character(pg.sprite.Sprite):
         if self.can_jump:
             self._jump(height, pg.sprite.spritecollide(self, grounds, False))
 
-    #pulo do personagem
+    # jump
     def _jump(self, height, colisao):
         if self.cage_collected:
             up_pressed = True
@@ -77,12 +79,16 @@ class Character(pg.sprite.Sprite):
 
         if d_pressed or right_pressed:
             self.looking = True
-            if self.rect.right < width:
+            if self.rect.right >= width and self.cameraX < 1080:
+                self.cameraX += self.speed
+            if self.rect.right <= width:
                 self.rect = self.rect.move(self.speed, 0)
         elif left_pressed or a_pressed:
             self.looking = False
             if self.rect.left > 0:
                 self.rect = self.rect.move(-self.speed, 0)
+            if self.rect.left <= 0 and self.cameraX > 0:
+                self.cameraX -= self.speed    
 
     #animação do personagem
     def animation(self):

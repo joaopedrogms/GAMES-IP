@@ -10,6 +10,7 @@ from platforms import *
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, 'media')
 
+
 def load_image(name, colorkey=None, scale=0.3):
     fullpath = os.path.join(data_dir, 'img')
     fullname = os.path.join(fullpath, name)
@@ -27,53 +28,57 @@ def load_image(name, colorkey=None, scale=0.3):
 
     return image
 
-def load_strawberries():
-    strawberry1 = Collectable(400, 620, 'strawberry')
-    strawberry2 = Collectable(400, 560, 'strawberry')
-    strawberry3 = Collectable(450, 560, 'strawberry')
-    strawberry4 = Collectable(450, 620, 'strawberry')
-    strawberry5 = Collectable(500, 620, 'strawberry')
-    strawberry6 = Collectable(500, 560, 'strawberry')
-    strawberry7 = Collectable(150, 560, 'strawberry')
-    strawberry8 = Collectable(150, 620, 'strawberry')
 
-    strawberry9 = Collectable(200, 560, 'strawberry')
-    strawberry10 = Collectable(200, 620, 'strawberry')
-    strawberry11 = Collectable(250, 560, 'strawberry')
-    strawberry12 = Collectable(250, 620, 'strawberry')
-    strawberry13 = Collectable(300, 560, 'strawberry')
-    strawberry14 = Collectable(300, 620, 'strawberry')
-    strawberry15 = Collectable(350, 560, 'strawberry')
-    strawberry16 = Collectable(350, 620, 'strawberry')
+def load_strawberries(cameraX):
+    strawberry1 = Collectable(400 + cameraX, 620, 'strawberry')
+    strawberry2 = Collectable(400 + cameraX, 560, 'strawberry')
+    strawberry3 = Collectable(450 + cameraX, 560, 'strawberry')
+    strawberry4 = Collectable(450 + cameraX, 620, 'strawberry')
+    strawberry5 = Collectable(500 + cameraX, 620, 'strawberry')
+    strawberry6 = Collectable(500 + cameraX, 560, 'strawberry')
+    strawberry7 = Collectable(150 + cameraX, 560, 'strawberry')
+    strawberry8 = Collectable(150 + cameraX, 620, 'strawberry')
 
-    strawberry17 = Collectable(200, 500, 'strawberry')
-    strawberry18 = Collectable(250, 500, 'strawberry')
-    strawberry19 = Collectable(300, 500, 'strawberry')
-    strawberry20 = Collectable(350, 500, 'strawberry')
-    strawberry21 = Collectable(400, 500, 'strawberry')
-    strawberry22 = Collectable(450, 500, 'strawberry')
-    strawberry23 = Collectable(500, 500, 'strawberry')
-    strawberry24 = Collectable(150, 500, 'strawberry')
+    strawberry9 = Collectable(200 + cameraX, 560, 'strawberry')
+    strawberry10 = Collectable(200 + cameraX, 620, 'strawberry')
+    strawberry11 = Collectable(250 + cameraX, 560, 'strawberry')
+    strawberry12 = Collectable(250 + cameraX, 620, 'strawberry')
+    strawberry13 = Collectable(300 + cameraX, 560, 'strawberry')
+    strawberry14 = Collectable(300 + cameraX, 620, 'strawberry')
+    strawberry15 = Collectable(350 + cameraX, 560, 'strawberry')
+    strawberry16 = Collectable(350 + cameraX, 620, 'strawberry')
+
+    strawberry17 = Collectable(200 + cameraX, 500, 'strawberry')
+    strawberry18 = Collectable(250 + cameraX, 500, 'strawberry')
+    strawberry19 = Collectable(300 + cameraX, 500, 'strawberry')
+    strawberry20 = Collectable(350 + cameraX, 500, 'strawberry')
+    strawberry21 = Collectable(400 + cameraX, 500, 'strawberry')
+    strawberry22 = Collectable(450 + cameraX, 500, 'strawberry')
+    strawberry23 = Collectable(500 + cameraX, 500, 'strawberry')
+    strawberry24 = Collectable(150 + cameraX, 500, 'strawberry')
 
     return strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberry7, strawberry8, strawberry9, strawberry10, strawberry11, strawberry12, strawberry13, strawberry14, strawberry15, strawberry16, strawberry17, strawberry18, strawberry19, strawberry20, strawberry21, strawberry22, strawberry23, strawberry24
 
-def load_keys_and_cage():
-    yellow_key_1 = Collectable(700, 620, 'yellow_key')
-    yellow_key_2 = Collectable(600, 500, 'yellow_key')
 
-    blue_key_1 = Collectable(900, 620, 'blue_key')
-    blue_key_2 = Collectable(700, 500, 'blue_key')
+def load_keys_and_cage(cameraX):
+    yellow_key_1 = Collectable(700 - cameraX, 620, 'yellow_key')
+    yellow_key_2 = Collectable(600 - cameraX, 500, 'yellow_key')
 
-    cage = Collectable(1000, 604, 'cage')
+    blue_key_1 = Collectable(900 - cameraX, 620, 'blue_key')
+    blue_key_2 = Collectable(700 - cameraX, 500, 'blue_key')
+
+    cage = Collectable(1000 - cameraX, 604, 'cage')
 
     return yellow_key_1, yellow_key_2, blue_key_1, blue_key_2, cage
 
+
 def load_platforms():
     ground_plataform = Platform(0, 687, 1080, 70)
-
     return ground_plataform
 
+
 def main():
+
     global sprites_behind_player
     sprites_behind_player = pg.sprite.Group()
 
@@ -82,23 +87,26 @@ def main():
     pg.display.set_caption('Llama simulator')
     pg.display.set_icon(load_image('icon.png'))
 
+    llama = Character()
+
     # groups
     colllectables_group = pg.sprite.Group()
     platforms_group = pg.sprite.Group()
 
     background = load_image('background.png', scale=1)
-    background = pg.transform.scale(background, (screen.get_size()[0], screen.get_size()[1]))
+    background = pg.transform.scale(
+        background, (screen.get_size()[0] * 2, screen.get_size()[1]))
 
-    colllectables_group.add(load_keys_and_cage(), load_strawberries())
+    colllectables_group.add(load_keys_and_cage(
+        llama.cameraX), load_strawberries(llama.cameraX))
     platforms_group.add(load_platforms())
 
-    screen.blit(background, (0, 0))
     print(pg.display.get_surface().get_size())
     pg.display.flip()
 
     princess = None
     wait_jump_count = 0
-    llama = Character()
+    screen.blit(background, (0, 0))
 
     global allsprites
     allsprites = pg.sprite.RenderPlain(llama)
@@ -116,12 +124,16 @@ def main():
         if pg.key.get_pressed()[pg.K_ESCAPE]:
             going = False
         elif going:
-            llama.update(screen.get_size()[0], screen.get_size()[1], platforms_group)
+            llama.update(screen.get_size()[0], screen.get_size()[
+                         1], platforms_group)
 
+        #colllectables_group.empty()
+        #colllectables_group.add(load_keys_and_cage(
+       # llama.cameraX), load_strawberries(llama.cameraX))
         colllectables_group.update(llama)
 
-        screen.blit(background, (0, 0))
-
+        screen.blit(background, (0 - llama.cameraX, 0 - llama.cameraY))
+        
         sprites_behind_player.draw(screen)
 
         if llama.cage_collected:
@@ -137,7 +149,7 @@ def main():
                 sprites_behind_player.add(princess)
 
         for collectable in colllectables_group:
-            collectable.draw(screen)
+            collectable.draw(screen)    
 
         if pg.key.get_pressed()[pg.K_f]:
             pg.display.toggle_fullscreen()
@@ -147,12 +159,14 @@ def main():
         pg.sprite.Group(hud).update()
         pg.sprite.Group(hud).draw(screen)
 
-        allsprites.update(screen.get_size()[0], screen.get_size()[1], platforms_group)
+        allsprites.update(screen.get_size()[0], screen.get_size()[
+                          1], platforms_group)
         platforms_group.draw(screen)
 
         pg.display.flip()
 
     pg.quit()
+
 
 if __name__ == "__main__":
     main()
