@@ -1,3 +1,4 @@
+import sys
 import os
 import pygame as pg
 from pygame.locals import *
@@ -7,6 +8,7 @@ from princess import *
 from collectables import *
 from platforms import *
 from holes import *
+from clouds import *
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, 'media')
@@ -97,21 +99,75 @@ def load_holes():
 
     return hole1
 
-def main():
-    #inicialização do jogo
+def load_clouds():
+    cloud_1 = Cloud(-700, 60, 'sprite_platform_1.png')
+    cloud_2 = Cloud(1300, 530, 'sprite_platform_2.png')
+    cloud_3 = Cloud(180, 370, 'sprite_platform_3.png')
+
+    return cloud_1, cloud_2, cloud_3
+def menu():
     pg.init()
     screen = pg.display.set_mode((1080, 760), pg.SCALED)
-    pg.display.set_caption('Llama simulator')
-    pg.display.set_icon(load_image('icon.png'))
+    pg.display.set_caption('Llama Adventures')
+    pg.display.set_icon(load_image('icon.png', scale=1))
+    background = load_image('menu.png', scale=1)
+
+    title_button = load_image('llama_adventures.png', scale=1.09)
+    title_button_rect = title_button.get_rect(center=(screen.get_width() // 2, 250))
+    play_button = load_image('menu_play.png', scale=1)
+    play_button_rect = play_button.get_rect(center=(screen.get_width() // 2, 500))
+
+    cloud_group = pg.sprite.Group()
+    cloud_group.add(load_clouds())
+    clock = pg.time.Clock()
+    fullscreen_timer = 0
+
+    going = True
+    while going:
+        clock.tick(60)
+
+        for event in pg.event.get():
+            if event.type == pg.QUIT or pg.key.get_pressed()[pg.K_ESCAPE]:
+                sys.exit()
+            elif event.type == pg.MOUSEMOTION:
+                if play_button_rect.collidepoint(event.pos):
+                    play_button = load_image('mouse_on_menu_play.png', scale=1)
+                else:
+                    play_button = load_image('menu_play.png', scale=1)
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                if play_button_rect.collidepoint(event.pos):
+                    main(screen)
+
+        if pg.key.get_pressed()[pg.K_f]:
+            if pg.time.get_ticks() - fullscreen_timer > 300:
+                pg.display.toggle_fullscreen()
+                fullscreen_timer = pg.time.get_ticks()
+
+        #background
+        screen.blit(background, (0, 0))
+
+        #desenho das nuvens
+        cloud_group.update()
+        cloud_group.draw(screen)
+
+        #desenho do botao:
+        screen.blit(title_button, title_button_rect.topleft)
+        screen.blit(play_button, play_button_rect.topleft)
+
+        pg.display.flip()
+
+    pg.quit()
+
+def main(screen):
+
+    # carragamento da iamgem de fundo, coeltáveis e plataformas
+    background = load_image('background.png', scale=1)
+    background = pg.transform.scale(background, (screen.get_size()[0], screen.get_size()[1]))
 
     # grupos de sprites
     collectables_group = pg.sprite.Group()
     platforms_group = pg.sprite.Group()
     sprites_behind_player = pg.sprite.Group()
-
-    # carragamento da iamgem de fundo, coeltáveis e plataformas
-    background = load_image('background.png', scale=1)
-    background = pg.transform.scale(background, (screen.get_size()[0], screen.get_size()[1]))
 
     collectables_group.add(load_keys_and_cage(), load_strawberries())
     platforms_group.add(load_platforms())
@@ -132,7 +188,7 @@ def main():
         #saida do jogo
         for event in pg.event.get():
             if event.type == pg.QUIT or pg.key.get_pressed()[pg.K_ESCAPE]:
-                going = False
+                sys.exit()
 
         #update elementos da tela
         collectables_group.update(llama)
@@ -174,4 +230,4 @@ def main():
     pg.quit()
 
 if __name__ == "__main__":
-    main()
+    menu()
