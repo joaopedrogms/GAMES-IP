@@ -12,7 +12,7 @@
 2. Copie o link do repositório para colar o mesmo no terminal do seu ambiente de programação, como Visual Studio Code ou Pycharm, ou baixe o .zip do mesmo para
    executa-lo manualmente.
 4. No terminal, digite o comando "git clone https://github.com/joaopedrogms/GAMES-IP.git" para copiar repositório e seus devidos arquivos de imagem e linhas de código.
-5. Tenha certeza de que está no seguimento main.py e execute o código.
+5. Tenha certeza de que está no segmento main.py e execute o código.
 
 - **Como jogar:**
 
