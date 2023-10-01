@@ -11,7 +11,8 @@ class Character(pg.sprite.Sprite):
         self.image = load_image('main_character_idle.png')
         self.rect = self.image.get_rect()
 
-        self.hp = 3
+        self.hp = 1
+        self.new_hp = 0
         self.attack = 1
         self.speed = 6
 
@@ -118,9 +119,11 @@ class Character(pg.sprite.Sprite):
             self.vertical_speed += self.gravity
 
     def _strawberry(self):
-        if self.strawberries_collected >= 100 and self.hp < 10:
-            self.hp += 1
+        if self.strawberries_collected >= 10:
+            self.new_hp += 1
             self.strawberries_collected -= 10
+            if self.hp < 5:
+                self.hp += 1
 
     def _death(self):
         if self.rect.y > 900:

@@ -33,7 +33,7 @@ class HUD(pg.sprite.Sprite):
         strawberry_rect = self.strawberry_image.get_rect()
         strawberry_rect.topleft = (954, 10)
         self.image.blit(self.strawberry_image, strawberry_rect)
-        strawberry_count = self.game_font.render(str(self.character.strawberries_collected), True, (196, 0, 40))
+        strawberry_count = self.game_font.render(str(self.character.strawberries_collected + (10 * self.character.new_hp)), True, (196, 0, 40))
         self.image.blit(strawberry_count, (1001, 23))
 
         # yellow keys

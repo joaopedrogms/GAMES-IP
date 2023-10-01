@@ -2,10 +2,10 @@ import sys
 import os
 import pygame as pg
 
-from hud import *
 from character import *
 from princess import *
 from load import *
+from hud import *
 
 def load_image(name, scale=0.3):
     main_dir = os.path.split(os.path.abspath(__file__))[0]
@@ -85,6 +85,7 @@ def main(screen, llama=None, mapa=1):
     platforms_group = pg.sprite.Group()
     sprites_behind_player = pg.sprite.Group()
 
+    # checagem do level e carragemento de seus respectivos itens
     if mapa == 1:
         princess_x = 965
         princess_y = 600
@@ -95,7 +96,6 @@ def main(screen, llama=None, mapa=1):
         princess_y = 600
         collectables_group.add(load_keys_and_cage_2(), load_strawberries_2())
         platforms_group.add(load_platforms_2())
-        sprites_behind_player.add(load_holes_2())
     elif mapa == 3:
         princess_x = 965
         princess_y = 600
@@ -157,21 +157,27 @@ def main(screen, llama=None, mapa=1):
                 if wait_jump_count < 90:
                     wait_jump_count += 1
                 else:
-                    llama.can_jump = True
                     princess.update(platforms_group)
-                    if princess.jump_count > 3 and princess.vertical_speed > 0:
-                        #reinicialização do persoangem princiapal:
-                        Collectable.reset_collectable_keys()
-                        llama.golden_keys_collected = 0
-                        llama.silver_keys_collected = 0
-                        llama.rect.bottomleft = (0, 687)
-                        llama.cage_collected = False
-                        llama.can_jump = False
+                    llama.can_jump = True
+                    princess.can_jump = True
 
-                        #inicialização do proximo mapa
-                        mapa += 1
-                        main(screen, llama, mapa)
-                        going = False
+                    if princess.jump_count == 3 and princess.vertical_speed > 0:
+                        if mapa < 6:
+                            #reinicialização do persoangem princiapal:
+                            Collectable.reset_collectable_keys()
+                            llama.golden_keys_collected = 0
+                            llama.silver_keys_collected = 0
+                            llama.rect.bottomleft = (0, 687)
+                            llama.cage_collected = False
+                            llama.can_jump = False
+
+                            #inicialização do proximo mapa
+                            mapa += 1
+                            main(screen, llama, mapa)
+                            going = False
+                        else:
+                            #tela de fim
+                            pass
             else:
                 princess = Princess(princess_x, princess_y)
 
@@ -184,6 +190,7 @@ def main(screen, llama=None, mapa=1):
                 pg.display.toggle_fullscreen()
                 fullscreen_timer = pg.time.get_ticks()
 
+        # desenho da colisao das plataformas, uso interno apenas
         '''for platform in platforms_group:
             pg.draw.rect(screen, (255, 0, 0), platform.rect)'''
 

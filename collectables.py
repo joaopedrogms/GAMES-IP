@@ -54,4 +54,4 @@ class Collectable(pg.sprite.Sprite):
 
     @classmethod
     def get_quantity_silver_keys(cls):
-        return quantity_golden_keys
+        return quantity_silver_keys

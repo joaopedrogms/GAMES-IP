@@ -10,6 +10,7 @@ class Princess(pg.sprite.Sprite):
         self.rect.topleft = (x, y)
 
         self.jumping = False
+        self.can_jump = False
         self.jumping_height = -19.3
         self.gravity = 1
         self.vertical_speed = 0
@@ -23,21 +24,29 @@ class Princess(pg.sprite.Sprite):
         self._animation()
 
     def _jump(self):
-        if self.on_ground and not self.jumping:
+        if self.on_ground and self.can_jump and not self.jumping:
             self.vertical_speed = self.jumping_height
             self.jumping = True
             self.jump_count += 1
 
     def _gravity(self, platforms_group):
-        previous_y = self.rect.y
         self.rect = self.rect.move(0, self.vertical_speed)
-        self.on_ground = bool(pg.sprite.spritecollide(self, platforms_group, False))
+        self.on_ground = False
 
-        if self.on_ground:
-            self.rect.y = previous_y
-            self.vertical_speed = 0
-            self.jumping = False
-        else:
+        for platform in platforms_group:
+            if self.rect.colliderect(platform.rect):
+                # personagem caindo e checagem de colisao lateral
+                if self.vertical_speed >= 0:
+                    self.rect.y = platform.rect.y - self.rect.height
+                    self.vertical_speed = 0
+                    self.on_ground = True
+                    self.jumping = False
+                # personagem subindo e checagem de colisao lateral
+                elif self.vertical_speed < 0:
+                    self.rect.y = platform.rect.y + platform.rect.height
+                    self.vertical_speed = 0
+
+        if not self.on_ground:
             self.vertical_speed += self.gravity
 
     def _animation(self):
