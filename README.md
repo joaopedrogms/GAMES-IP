@@ -27,3 +27,5 @@ Jogabilidade:
  todas as suas vidas, o jogo se encerrará. 
 
 *Desvie dos obstáculos, colete chaves e pontos, salve a princesa e divirta-se!*
+
+Para mais informações acesse: https://games-ip.notion.site/PROJETO-IP-CIN-2023-1-3f8db8e4d31b48afbcb051f79d741c00?pvs=4
