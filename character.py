@@ -9,15 +9,14 @@ class Character(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self)
 
         self.image = load_image('main_character_idle.png')
-        self.rect = load_image('main_character_idle.png').get_rect()
+        self.rect = self.image.get_rect()
 
         self.hp = 3
-        self.new_hp = 0
         self.attack = 1
         self.speed = 6
 
-        self.yellow_keys_collected = 0
-        self.blue_keys_collected = 0
+        self.golden_keys_collected = 0
+        self.silver_keys_collected = 0
         self.cage_collected = False
         self.can_jump = False
         self.strawberries_collected = 0
@@ -119,9 +118,8 @@ class Character(pg.sprite.Sprite):
             self.vertical_speed += self.gravity
 
     def _strawberry(self):
-        if self.strawberries_collected >= 10:
+        if self.strawberries_collected >= 100 and self.hp < 10:
             self.hp += 1
-            self.new_hp += 1
             self.strawberries_collected -= 10
 
     def _death(self):

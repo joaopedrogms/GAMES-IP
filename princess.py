@@ -14,6 +14,7 @@ class Princess(pg.sprite.Sprite):
         self.gravity = 1
         self.vertical_speed = 0
         self.on_ground = False
+        self.jump_count = 0
 
     #atualização da gravidade, pulo e animação
     def update(self, plataforms_group):
@@ -25,6 +26,7 @@ class Princess(pg.sprite.Sprite):
         if self.on_ground and not self.jumping:
             self.vertical_speed = self.jumping_height
             self.jumping = True
+            self.jump_count += 1
 
     def _gravity(self, platforms_group):
         previous_y = self.rect.y

@@ -10,4 +10,5 @@ class Platform(pg.sprite.Sprite):
             self.rect = pg.Rect(x, y, width, height)
         else:
             self.image = load_image('sprite_platform_'+str(sprite)+'.png', scale=1.3)
+            self.image.set_alpha(204)
             self.rect = pg.Rect(x, y, self.image.get_width(), 1)
