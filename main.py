@@ -20,11 +20,40 @@ def load_image(name, scale=0.3):
 
     return image
 
-def menu():
-    pg.init()
-    screen = pg.display.set_mode((1080, 760), pg.SCALED)
-    pg.display.set_caption('Llama Adventures')
-    pg.display.set_icon(load_image('icon.png', scale=1))
+def end(screen, llama=None):
+    if llama is None:
+        background = load_image('team.png', scale=1)
+    elif llama.hp > 0:
+        background = load_image('end.png', scale=1)
+    else:
+        background = load_image('rip.png', scale=1)
+    background = pg.transform.scale(background, (screen.get_size()[0], screen.get_size()[1]))
+    fullscreen_timer = 0
+
+    going = True
+    while going:
+        for event in pg.event.get():
+            if event.type == pg.QUIT or pg.key.get_pressed()[pg.K_ESCAPE]:
+                pg.quit()
+                sys.exit()
+
+        # tela cheia com um contador
+        if pg.key.get_pressed()[pg.K_f]:
+            if pg.time.get_ticks() - fullscreen_timer > 300:
+                pg.display.toggle_fullscreen()
+                fullscreen_timer = pg.time.get_ticks()
+
+        if pg.key.get_pressed()[pg.K_m]:
+            menu(screen)
+
+        screen.blit(background, (0, 0))
+        pg.display.flip()
+def menu(screen=None):
+    if screen is None:
+        pg.init()
+        screen = pg.display.set_mode((1080, 760), pg.SCALED)
+        pg.display.set_caption('Llama Adventures')
+        pg.display.set_icon(load_image('icon.png', scale=1))
     background = load_image('menu.png', scale=1)
 
     title_button = load_image('llama_adventures.png', scale=1.09)
@@ -58,6 +87,9 @@ def menu():
             if pg.time.get_ticks() - fullscreen_timer > 300:
                 pg.display.toggle_fullscreen()
                 fullscreen_timer = pg.time.get_ticks()
+
+        if pg.key.get_pressed()[pg.K_t]:
+            end(screen)
 
         #background
         screen.blit(background, (0, 0))
@@ -115,7 +147,7 @@ def main(screen, llama=None, mapa=1):
         platforms_group.add(load_platforms_5())
         sprites_behind_player.add(load_holes_5())
 
-    # Inicialização de variáveis
+    # inicialização de variáveis
     fullscreen_timer = 0
     wait_jump_count = 0
     princess = None
@@ -141,7 +173,7 @@ def main(screen, llama=None, mapa=1):
         #update elementos da tela
         collectables_group.update(llama)
         pg.sprite.Group(hud).update()
-        llama.update(screen.get_size()[0], platforms_group)
+        llama.update(screen, platforms_group)
 
         #desenho de lementos da tela
         screen.blit(background, (0, 0))
@@ -162,22 +194,22 @@ def main(screen, llama=None, mapa=1):
                     princess.can_jump = True
 
                     if princess.jump_count == 3 and princess.vertical_speed > 0:
-                        if mapa < 6:
-                            #reinicialização do persoangem princiapal:
-                            Collectable.reset_collectable_keys()
-                            llama.golden_keys_collected = 0
-                            llama.silver_keys_collected = 0
-                            llama.rect.bottomleft = (0, 687)
-                            llama.cage_collected = False
-                            llama.can_jump = False
+                        #reinicialização do persoangem princiapal:
+                        Collectable.reset_collectable_keys()
+                        llama.golden_keys_collected = 0
+                        llama.silver_keys_collected = 0
+                        llama.rect.bottomleft = (0, 687)
+                        llama.cage_collected = False
+                        llama.can_jump = False
 
-                            #inicialização do proximo mapa
-                            mapa += 1
+                        #inicialização do proximo mapa
+                        mapa += 1
+                        if mapa < 6:
                             main(screen, llama, mapa)
                             going = False
                         else:
-                            #tela de fim
-                            pass
+                            end(screen, llama)
+                            going = False
             else:
                 princess = Princess(princess_x, princess_y)
 

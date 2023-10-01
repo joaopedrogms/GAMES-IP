@@ -33,12 +33,12 @@ class Character(pg.sprite.Sprite):
         self.horizontal_speed = 0
         self.on_ground = False
 
-    def update(self, width, platforms_group):
+    def update(self, screen, platforms_group):
         self._gravity(platforms_group)
         self._jump()
-        self._walk(width)
+        self._walk(screen.get_size()[0])
         self._animation()
-        self._death()
+        self._death(screen)
         self._strawberry()
 
     #jump do personagem
@@ -125,7 +125,7 @@ class Character(pg.sprite.Sprite):
             if self.hp < 5:
                 self.hp += 1
 
-    def _death(self):
+    def _death(self, screen):
         if self.rect.y > 900:
             if self.hp > 1:
                 self.hp -= 1
@@ -137,4 +137,4 @@ class Character(pg.sprite.Sprite):
                 self.can_jump = False
             else:
                 self.hp = 0
-                sys.exit()
+                end(screen, self)

@@ -22,7 +22,6 @@ class Princess(pg.sprite.Sprite):
         self._gravity(plataforms_group)
         self._jump()
         self._animation()
-
     def _jump(self):
         if self.on_ground and self.can_jump and not self.jumping:
             self.vertical_speed = self.jumping_height
